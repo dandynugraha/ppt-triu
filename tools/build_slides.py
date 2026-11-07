@@ -14,7 +14,7 @@ C = json.loads((ROOT / "build/content.json").read_text(encoding="utf-8"))
 S = {s["n"]: s for s in C["slides"]}
 e = html.escape
 T = {0: 0.00, 1: 0.05, 2: 0.17, 3: 0.32, 4: 0.46, 5: 0.53, 6: 0.60, 7: 0.66, 8: 0.86, 9: 0.93, 10: 1.00, 11: 1.00, 12: 1.00, 13: 1.00}
-SIDE = {n: ("r" if n in (2, 4, 6, 8, 10, 11, 12, 13) else "l") for n in range(1, 14)}
+SIDE = {n: ("r" if n in (2, 4, 6, 8, 10, 11, 12, 13) else "c" if n in (3, 9) else "l") for n in range(1, 14)}
 FX = {1: "words", 2: "wipe", 3: "slide", 4: "flip", 5: "scale", 6: "count", 7: "strike", 8: "split", 9: "panel", 10: "letters",
       11: "fade", 12: "fade", 13: "fade"}
 
@@ -91,19 +91,50 @@ def viz_pipeline():
         out.append(txt(190, y + (24 if head else 8), sub, "lab"))
     return svg("".join(out), "Pipeline: MRI, descriptors, correlation with KDR under FDR control, Random Forest with nested validation, PDB 2OH4 structure", "pipeline")
 
+def coin_flips():
+    """704 seeded coin flips (32 x 22), chosen so that exactly one row holds a run of six heads in a row
+    (the script's analogy for multiplicity). Illustration of chance, not data."""
+    import random
+    for seed in range(1, 5000):
+        r = random.Random(seed); f = [[r.random() < .5 for _ in range(32)] for _ in range(22)]
+        runs = []
+        for y, row in enumerate(f):
+            x = 0
+            while x < 32:
+                if row[x]:
+                    e2 = x
+                    while e2 < 32 and row[e2]: e2 += 1
+                    if e2 - x >= 6: runs.append((y, x, e2 - x))
+                    x = e2
+                else: x += 1
+        if len(runs) == 1 and runs[0][2] == 6 and 3 <= runs[0][0] <= 18: return f, runs[0]
+    raise SystemExit("no seed")
+
 def viz_checks():
-    grid = "".join(f'<rect class="cell" x="{90 + c*19}" y="{150 + r*13}" width="15" height="9" rx="1.5" style="--d:{(r*32+c)%60}"/>' for r in range(22) for c in range(32))
+    flips, (ry, rx, rn) = coin_flips()
+    X0, Y0, DX, DY = 70, 168, 21, 17
+    coins = []
+    for y in range(22):
+        for x in range(32):
+            h = flips[y][x]; run = (y == ry and rx <= x < rx + rn)
+            coins.append(f'<circle class="coin pop {"h" if h else "t"}{" run" if run else ""}" cx="{X0 + x*DX}" cy="{Y0 + y*DY}" r="{7.2 if h else 6}" style="--d:{(y*32+x)//6}"/>')
+    hx0, hx1, hy = X0 + rx*DX - 13, X0 + (rx + rn - 1)*DX + 13, Y0 + ry*DY
+    hl = (f'<rect class="runbox draw" pathLength="1" x="{hx0}" y="{hy-13}" width="{hx1-hx0}" height="26" rx="13"/>'
+          f'<line class="runlead draw" pathLength="1" x1="{(hx0+hx1)/2:.0f}" y1="{hy+13}" x2="{(hx0+hx1)/2:.0f}" y2="{Y0 + 22*DY + 4}"/>' +
+          txt((hx0 + hx1) / 2, Y0 + 22*DY + 34, b(5, "vz_six"), "lab lime big runlab", "middle"))
     rows = []
     for j, (lab, cover) in enumerate([(b(5, "vz_all"), 1.0), (b(5, "vz_only"), 0.8)]):
-        y = 560 + j * 150
-        sq = "".join(f'<rect class="pt {"te" if i >= 24 else "tr"}" x="{90 + i*21}" y="{y}" width="17" height="30" rx="3"/>' for i in range(30))
-        br = f'<path class="brace {"bad" if j == 0 else "good"} draw" pathLength="1" d="M90,{y-14} L90,{y-24} L{90 + 630*cover - 4},{y-24} L{90 + 630*cover - 4},{y-14}"/>'
-        rows.append(sq + br + txt(90, y - 38, lab, "lab " + ("magenta" if j == 0 else "cyan")))
-    inner = (txt(90, 112, b(5, "vz_mult") + " · " + b(5, "vz_tests"), "lab caps") + grid +
-             txt(90, 476, b(5, "vz_leak"), "lab caps") + "".join(rows) +
-             f'<rect class="pt tr" x="90" y="815" width="17" height="17" rx="3"/>' + txt(116, 829, b(5, "vz_train"), "lab small") +
-             f'<rect class="pt te" x="330" y="815" width="17" height="17" rx="3"/>' + txt(356, 829, b(5, "vz_test"), "lab small"))
-    return svg(inner, "Two checks: 704 tests at once; feature selection on all the data versus only the training data", "checks")
+        y = 690 + j * 96
+        sq = "".join(f'<rect class="pt {"te" if i >= 24 else "tr"}" x="{70 + i*21}" y="{y}" width="17" height="26" rx="3"/>' for i in range(30))
+        br = f'<path class="brace {"bad" if j == 0 else "good"} draw" pathLength="1" d="M70,{y-12} L70,{y-22} L{70 + 630*cover - 4},{y-22} L{70 + 630*cover - 4},{y-12}"/>'
+        rows.append(sq + br + txt(70, y - 34, lab, "lab " + ("magenta" if j == 0 else "cyan")))
+    inner = (txt(70, 112, b(5, "vz_mult") + " · " + b(5, "vz_tests"), "lab caps") +
+             txt(70, 140, b(5, "vz_coin"), "lab small") + "".join(coins) + hl +
+             txt(70, 626, b(5, "vz_leak"), "lab caps") + "".join(rows) +
+             f'<rect class="pt tr" x="70" y="842" width="15" height="15" rx="3"/>' + txt(94, 855, b(5, "vz_train"), "lab small") +
+             f'<rect class="pt te" x="290" y="842" width="15" height="15" rx="3"/>' + txt(314, 855, b(5, "vz_test"), "lab small") +
+             f'<circle class="coin h" cx="520" cy="849" r="7.2"/>' + txt(536, 855, b(5, "vz_heads"), "lab small"))
+    return svg(inner, "Multiplicity: 704 coin flips with one run of six heads in a row, by chance alone; leakage: selection on all the data versus only the training data", "checks")
 
 def viz_bars():            # 704 tested -> 61 nominal -> 35 expected -> 0 survive FDR (paper)
     vals = [("704", 704, b(6, "vz_tested"), "slate"), ("61", 61, b(6, "vz_nominal"), "cyan"), ("35", 35, b(6, "vz_chance"), "amber"), ("0", 0, b(6, "vz_fdr"), "magenta")]
@@ -171,9 +202,8 @@ L[1] = (eyebrow(1) + title(1, "hero", "KDR/VEGFR-2", "acc cyan") +
 L[2] = (eyebrow(2) + title(2, "h-l", "not from tissue.", "acc underline") +
         '<dl class="defs">' + a(3, f'<dt>{b(2,"c1h")}</dt><dd>{b(2,"c1")}</dd>', "def") + a(4, f'<dt>{b(2,"c2h")}</dt><dd>{b(2,"c2")}</dd>', "def") + '</dl>' +
         a(5, f'<p class="inline-stat">{num(b(2,"n"))}<span>{b(2,"nl")}</span></p>') + a(6, f'<p class="quote">{b(2,"noscan")}</p>'))
-L[3] = (eyebrow(3) + title(3, "h-m", "unless something receives it.", "acc magenta") +
-        '<ol class="stepper">' + "".join(a(3 + i, f'<span class="big-idx">0{i+1}</span><p>{b(3,k)}</p>', "", "li") for i, k in enumerate(["s1", "s2", "s3"])) + '</ol>' +
-        a(7, f'<p class="quote">{b(3,"why")}</p>'))
+L[3] = (eyebrow(3) + title(3, "h-c", "unless something receives it.", "acc magenta") + a(4, f'<p class="quote">{b(3,"why")}</p>'))
+R3 = ('<ol class="stepper narrow">' + "".join(a(3 + i, f'<span class="big-idx">0{i+1}</span><p>{b(3,k)}</p>', "", "li") for i, k in enumerate(["s1", "s2", "s3"])) + '</ol>')
 L[4] = (eyebrow(4) + f'<h1 class="t giant tri"><span class="w"><span style="--k:0" class="cyan">Image,</span></span> <span class="w"><span style="--k:1" class="magenta">gene,</span></span> <span class="w"><span style="--k:2" class="amber">structure.</span></span></h1>' +
         a(3, f'<p class="lead">{b(4,"m1")} {b(4,"m2")}</p>') +
         a(4, f'<blockquote class="bar-quote"><strong>{b(4,"why")}</strong> {b(4,"why2")}</blockquote>'))
@@ -190,10 +220,9 @@ L[7] = (eyebrow(7) + title(7, "h-l", "all the data.", "acc lime-text") +
 L[8] = (eyebrow(8) + title(8, "h-l", "Opposite answers.", "acc amber") +
         a(3, f'<p class="lead">{b(8,"caveat")}</p>') + a(4, f'<p class="aside">{b(8,"indep")}</p>') +
         a(5, f'<p class="callout">{b(8,"kdr")}</p>'))
-L[9] = (eyebrow(9) + title(9, "h-l", "The record keeping did.", "acc underline") +
-        a(3, f'<p class="quote">{b(9,"two")}</p>') +
-        a(4, f'<p class="ask">{b(9,"ask")}</p><p class="ask-sub">{b(9,"askl")}</p>', "ask-wrap") +
-        a(5, f'<p class="aside">{b(9,"open")} {b(9,"wrong")}<br><span class="link">{b(9,"link")}</span></p>'))
+L[9] = (eyebrow(9) + title(9, "h-c", "The record keeping did.", "acc underline") + a(3, f'<p class="quote">{b(9,"two")}</p>'))
+R9 = (a(4, f'<p class="ask">{b(9,"ask")}</p><p class="ask-sub">{b(9,"askl")}</p>', "ask-wrap") +
+      a(5, f'<p class="aside">{b(9,"open")} {b(9,"wrong")}<br><span class="link">{b(9,"link")}</span></p>'))
 def letters(t):                       # letters grouped per word so a word never breaks
     out, k = [], 0
     for wd in t.split():
@@ -217,8 +246,11 @@ L[13] = (eyebrow(13) + title(13, "h-m") +
          '<ol class="stepper tight">' + "".join(a(2 + i, f'<span class="big-idx">0{i+1}</span><p>{b(13,k)}</p>', "", "li") for i, k in enumerate(["a", "b", "c", "d"])) + '</ol>' +
          a(6, f'<p class="aside">{b(13,"e")}</p>'))
 
+RIGHT = {3: R3, 9: R9}
 def compose(n):
-    return f'<div class="col">{L[n]}</div><div class="viz" aria-hidden="false">{VIZ[n]}</div>'
+    if n in RIGHT:   # visual in the middle, text on both sides
+        return f'<div class="col col-l">{L[n]}</div><div class="viz">{VIZ[n]}</div><div class="col col-r">{RIGHT[n]}</div>'
+    return f'<div class="col">{L[n]}</div><div class="viz">{VIZ[n]}</div>'
 
 slides = [{"n": 0, "t": T[0], "kind": "intro", "title": "Intro: IPB University · Tri-U 32", "label": "Intro", "html": "",
            "notes": "Logo IPB masuk, lalu bergeser ke kiri dan logo Tri-U masuk. Tekan Enter untuk masuk ke slide 1.",

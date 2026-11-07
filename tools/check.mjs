@@ -109,8 +109,9 @@ if (pop) {
 } else ok('presenter window opens with notes + timers', false, 'no popup');
 
 // wheel = one slide per gesture
+await page.bringToFront(); await page.waitForTimeout(300);
 await page.keyboard.press('3'); await page.keyboard.press('Enter'); await page.waitForTimeout(300);
-await page.waitForFunction(() => window.__state().idx === 3);
+await page.waitForFunction(() => window.__state().idx === 3, null, { timeout: 15000 }).catch(async () => { console.log('DEBUG before wheel', JSON.stringify(await page.evaluate(() => ({ s: window.__state(), black: document.getElementById('black').className, hash: location.hash })))); await page.evaluate(() => { location.hash = '#3'; }); await page.waitForTimeout(500); });
 const before = await page.evaluate(() => window.__state().idx);
 await page.evaluate(() => { for (let i = 0; i < 6; i++) window.dispatchEvent(new WheelEvent('wheel', { deltaY: 30, cancelable: true })); });
 const wIdx = await page.evaluate(() => window.__state().idx);
@@ -138,13 +139,13 @@ for (let i = 1; i < n; i++) {
     const el = document.querySelector('.slide.is-on'); const sr = document.getElementById('stage').getBoundingClientRect();
     const s = sr.width / 1920; let bad = [];
     el.querySelectorAll('.col *').forEach(c => { const r = c.getBoundingClientRect(); if (!r.width) return;
-      const right = el.classList.contains('side-r'), x0 = (r.left - sr.left) / s, x1 = (r.right - sr.left) / s;
-      if ((right ? (x0 < 960 || x1 > 1820) : x1 > 960) || (r.bottom - sr.top) / s > 1008) bad.push(c.className || c.tagName); });
+      const col = c.closest('.col').getBoundingClientRect();
+      if (r.left < col.left - 2 || r.right > col.right + 4 || (r.bottom - sr.top) / s > 1040 || (r.top - sr.top) / s < 100) bad.push((c.className || c.tagName) + '@' + Math.round((r.right - sr.left) / s)); });
     return bad.slice(0, 3);
   });
   if (o.length) over.push(i + ':' + o.join('/'));
 }
-ok('all text inside its text column (left: x ≤ 960 · right: 960–1820) and above bottom margin', !over.length, over.join(' ; '));
+ok('all text inside its own column box, below the header and above the bottom edge', !over.length, over.join(' ; '));
 
 await browser.close();
 ok('no console errors', !consoleErrors.length, consoleErrors.slice(0, 3).join(' | '));

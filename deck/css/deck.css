@@ -261,3 +261,51 @@ p { font-size: 24px; line-height: 1.5; color: var(--ink); max-width: 32em; }
 .col .foot { padding-bottom: 46px; }
 .viz-svg .lab.cyan { fill: var(--cyan); } .viz-svg .lab.magenta { fill: var(--magenta); } .viz-svg .lab.amber { fill: var(--amber); }
 .viz-svg .lab.lime { fill: var(--lime); } .viz-svg .lab.slate { fill: var(--slate); }
+
+/* ---------- v10 layout pass: balance, sizes, centre layout, coins ---------- */
+/* text sits in the vertical middle of the stage so it never looks top-heavy next to a tall visual */
+.col { top: 132px; bottom: 132px; justify-content: center; }
+.col .foot { position: absolute; left: 0; bottom: -46px; margin: 0; padding: 0; }
+.viz { top: 120px; }
+/* centre layout: visual in the middle, text on both sides (slides 3 and 9) */
+.side-c .col { width: 424px; }
+.side-c .col-l { left: var(--margin-x); }
+.side-c .col-r { left: calc(var(--stage-w) - var(--margin-x) - 424px); }
+.side-c .viz { left: 556px; }
+#stage.side-c .counter { left: var(--margin-x); }
+.h-c { font-size: 50px; line-height: 1.04; letter-spacing: -0.03em; }
+.side-c .quote { font-size: 22px; }
+.stepper.narrow { margin-top: 0; }
+.stepper.narrow li { grid-template-columns: 74px 1fr; padding: 22px 0; }
+.stepper.narrow .big-idx { font-size: 44px; }
+.stepper.narrow p { font-size: 21px; }
+.side-c .ask { font-size: 36px; }
+/* sizes */
+.mega { font-size: 128px; }
+.giant { font-size: 90px; }
+.tri { font-size: 96px; }
+.hero { font-size: 52px; }
+.h-l { font-size: 72px; }
+.stat-row { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+.srow:nth-child(3) { padding-left: 0; border-left: 0; }
+.srow .num { font-size: 80px; }
+.srow span:last-child { font-size: 15px; }
+.bar-quote strong { text-wrap: balance; }
+.compare { grid-template-columns: 1fr; gap: 26px; }
+.val-l { font-size: 26px !important; }
+/* coins (slide 5) */
+.coin.h { fill: var(--amber); } .coin.t { fill: none; stroke: var(--slate); stroke-width: 1.6; opacity: .75; }
+.coin.run { fill: var(--lime); }
+.runbox { fill: none; stroke: var(--lime); stroke-width: 3; }
+.runlead { stroke: var(--lime); stroke-width: 2; stroke-dasharray: 4 5; }
+.checks .coin.pop { transition-delay: calc(var(--d) * 16ms + 300ms) !important; }
+.slide:not(.is-in) .checks .runbox, .slide:not(.is-in) .checks .runlead { stroke-dashoffset: 1; }
+.slide.is-in .checks .runbox { transition: stroke-dashoffset 900ms var(--ease-out) 2300ms !important; }
+.slide.is-in .checks .runlead { transition: stroke-dashoffset 600ms var(--ease-out) 2900ms !important; }
+.slide:not(.is-in) .checks .runlab { opacity: 0; }
+.slide.is-in .checks .runlab { transition: opacity 500ms linear 3100ms; }
+.runlead.draw { stroke-dasharray: 1 1; }
+.col .foot { bottom: -2px; }
+.side-c .viz { left: 584px; width: 752px; }
+.side-c .viz-svg { width: 752px; height: 800px; }
+.side-c .viz-canvas { width: 752px; height: 708px; }

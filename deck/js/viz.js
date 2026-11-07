@@ -17,54 +17,71 @@
   function sdEll(x, y, z, rx, ry, rz) { const k0 = Math.hypot(x / rx, y / ry, z / rz), k1 = Math.hypot(x / (rx * rx), y / (ry * ry), z / (rz * rz)); return k0 * (k0 - 1) / k1; }
   function smin(a, b, k) { const h = clamp(.5 + .5 * (b - a) / k); return lerp(b, a, h) - k * h * (1 - h); }
   function cap(x, y, z, ax, ay, az, bx, by, bz, r) { const pax = x - ax, pay = y - ay, paz = z - az, bax = bx - ax, bay = by - ay, baz = bz - az; const h = clamp((pax * bax + pay * bay + paz * baz) / (bax * bax + bay * bay + baz * baz)); return Math.hypot(pax - bax * h, pay - bay * h, paz - baz * h) - r; }
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  /* anatomical-ish brain: two hemispheres with a midline fissure, frontal / occipital / temporal lobes,
+     lateral (Sylvian) fissure, gyri and sulci, folded cerebellum, brainstem. x = front(-)..back(+), y = up, z = left/right */
   function brainD(x, y, z) {
-    let d = sdEll(x, y - .12, z, 1, .70, .74);
-    d = smin(d, sdEll(x + .12, y + .28, z, .66, .36, .62), .18);
-    d = smin(d, sdEll(x - .58, y + .46, z, .40, .25, .44), .07);
-    d = smin(d, cap(x, y, z, .28, -.40, 0, .36, -1.0, 0, .14), .12);
-    const g = Math.sin(y * 20 + x * 7 + 3.5 * Math.sin(z * 4 + x * 2.5) + 2 * Math.sin(x * 5 - y * 3));
-    return d + .018 * g * clamp(y + .3);                      // gentle gyri on the upper surface
+    const az = Math.abs(z);
+    let h = sdEll(x + .02, y - .16, az - .28, .98, .60, .46);                       // cerebrum
+    h = smin(h, sdEll(x + .58, y - .10, az - .26, .46, .44, .40), .2);             // frontal lobe (rounded pole)
+    h = smin(h, sdEll(x - .66, y - .08, az - .25, .38, .40, .34), .18);            // occipital lobe
+    const tl = sdEll(x + .12, y + .26, az - .38, .56, .22, .26);                    // temporal lobe, hangs below
+    h = smin(h, tl, .09);
+    const syl = (y + .06) - (x + .62) * .24;                                         // lateral (Sylvian) fissure
+    if (x > -.72 && x < .30) h += .085 * Math.exp(-syl * syl * 300) * smooth(.15, .38, az);
+    const g = Math.sin(y * 24 + x * 9 + 3.2 * Math.sin(az * 7 + x * 4) + 2.4 * Math.sin(x * 7 - y * 5));
+    h += .03 * g * clamp(y + .5);                                                    // gyri / sulci
+    if (y > -.2) h = Math.max(h, .028 - az);                                         // midline fissure
+    const ce = sdEll(x - .55, y + .50, z, .36, .21, .46) + .012 * Math.sin(y * 80 + x * 14);   // cerebellum + folia
+    let d = Math.min(h, ce);                                                         // keep the notch between them
+    d = smin(d, cap(x, y, z, .20, -.38, 0, .28, -1.02, 0, .12), .08);              // brainstem
+    return d;
   }
-  const TUM = [-.42, .30, .40];
+  const TUM = [-.42, .24, .34];
   let BRAIN = null;
-  function buildBrain() {                                    // marching squares on axial (y) slices
-    const slices = [], N = 72, X0 = -1.25, X1 = 1.25, Z0 = -.95, Z1 = .95;
-    for (let s = 0; s < 40; s++) {
-      const y = -1.0 + s * (1.86 / 39), segs = [], g = [];
-      for (let j = 0; j <= N; j++) { g.push([]); for (let i = 0; i <= N; i++) g[j].push(brainD(lerp(X0, X1, i / N), y, lerp(Z0, Z1, j / N))); }
-      const P = (i, j, i2, j2) => { const a = g[j][i], b = g[j2][i2], t = a / (a - b); return [lerp(X0, X1, lerp(i, i2, t) / N), lerp(Z0, Z1, lerp(j, j2, t) / N)]; };
-      for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+  function buildBrain() {                                    // marching squares on SAGITTAL (z) slices: each contour is a side profile
+    const slices = [], NX = 120, NY = 96, X0 = -1.3, X1 = 1.25, Y0 = -1.12, Y1 = .9, NS = 34;
+    for (let s = 0; s < NS; s++) {
+      const z = -.60 + s * (1.20 / (NS - 1)), segs = [], g = [];
+      if (Math.abs(z) < .07) continue;                         // skip the midline (fissure artefacts)
+      for (let j = 0; j <= NY; j++) { g.push([]); for (let i = 0; i <= NX; i++) g[j].push(brainD(lerp(X0, X1, i / NX), lerp(Y0, Y1, j / NY), z)); }
+      const P = (i, j, i2, j2) => { const a = g[j][i], b = g[j2][i2], t = a / (a - b); return [lerp(X0, X1, lerp(i, i2, t) / NX), lerp(Y0, Y1, lerp(j, j2, t) / NY)]; };
+      for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
         const c = (g[j][i] < 0 ? 1 : 0) | (g[j][i + 1] < 0 ? 2 : 0) | (g[j + 1][i + 1] < 0 ? 4 : 0) | (g[j + 1][i] < 0 ? 8 : 0);
         if (c === 0 || c === 15) continue;
         const e = { t: () => P(i, j, i + 1, j), r: () => P(i + 1, j, i + 1, j + 1), b: () => P(i, j + 1, i + 1, j + 1), l: () => P(i, j, i, j + 1) };
         const L = { 1: ['l', 't'], 2: ['t', 'r'], 3: ['l', 'r'], 4: ['r', 'b'], 5: ['l', 't', 'r', 'b'], 6: ['t', 'b'], 7: ['l', 'b'], 8: ['b', 'l'], 9: ['b', 't'], 10: ['t', 'r', 'b', 'l'], 11: ['b', 'r'], 12: ['r', 'l'], 13: ['r', 't'], 14: ['t', 'l'] }[c];
-        for (let k = 0; k < L.length; k += 2) { const A = e[L[k]](), B = e[L[k + 1]](); segs.push([A[0], y, A[1], B[0], y, B[1]]); }
+        for (let k = 0; k < L.length; k += 2) { const A = e[L[k]](), B = e[L[k + 1]](); segs.push([A[0], A[1], z, B[0], B[1], z]); }
       }
-      if (segs.length) slices.push({ y, segs });
+      if (segs.length) slices.push({ z, f: s / (NS - 1), segs });
     }
     BRAIN = slices;
   }
   function drawBrain(ctx, W, H, t, warm) {
     if (!BRAIN) buildBrain();
-    const yaw = -.55 + Math.sin(t * .22) * .5 + t * .05, pitch = .34, S = Math.min(W, H) * .47, cx = W / 2, cy = H * .5;
+    const yaw = .22 + Math.sin(t * .22) * .34, pitch = .12 + Math.sin(t * .13) * .05, S = Math.min(W, H) * .44, cx = W * .5, cy = H * .47;
     const cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
     const proj = (x, y, z) => { const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z; const y2 = cp * y - sp * z1, z2 = sp * y + cp * z1; const per = 3.6 / (3.6 - z2); return [cx + x1 * S * per, cy - y2 * S * per, z2]; };
-    const scanY = -.9 + (Math.sin(t * .5) * .5 + .5) * 1.7;
+    const scanZ = -.60 + (Math.sin(t * .45) * .5 + .5) * 1.20;
     const lo = warm ? COL.amber : COL.cyan, mid = warm ? COL.pink : COL.violet, hi = warm ? COL.violet : COL.magenta;
-    ctx.lineCap = 'round';
-    for (const sl of BRAIN) {
-      const f = clamp((sl.y + 1) / 1.9), base = f < .5 ? mixc(lo, mid, f * 2) : mixc(mid, hi, (f - .5) * 2);
-      const scan = Math.exp(-Math.pow((sl.y - scanY) / .07, 2));
-      ctx.lineWidth = (2.1 + scan * 2.6) * W / 808;
-      ctx.beginPath(); let zsum = 0;
-      for (const s of sl.segs) { const a = proj(s[0], s[1], s[2]), b = proj(s[3], s[4], s[5]); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); zsum += a[2]; }
-      const depthA = .7 + .3 * clamp(zsum / sl.segs.length + .5);
-      ctx.strokeStyle = rgba(mixc(base, COL.white, .12 + scan * .7), clamp(depthA * (.78 + scan * .22)));
+    const k = W / 808;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const order = BRAIN.map((sl, i) => [i, -syw * 0 + cyw * sl.z]).sort((a, b) => a[1] - b[1]);   // far slices first
+    for (const [si] of order) {
+      const sl = BRAIN[si], base = sl.f < .5 ? mixc(lo, mid, sl.f * 2) : mixc(mid, hi, (sl.f - .5) * 2);
+      const scan = Math.exp(-Math.pow((sl.z - scanZ) / .06, 2));
+      const zc = proj(0, 0, sl.z)[2], depth = clamp(.5 + zc * .55);
+      ctx.beginPath();
+      for (const s of sl.segs) { const a = proj(s[0], s[1], s[2]), b = proj(s[3], s[4], s[5]); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }
+      ctx.lineWidth = (1.5 + depth * .9 + scan * 2.4) * k;
+      ctx.strokeStyle = rgba(mixc(base, COL.white, .1 + scan * .75), clamp((.32 + .6 * depth) + scan * .4));
       ctx.stroke();
-      // tumour region on this slice
-      ctx.beginPath(); let any = false;
-      for (const s of sl.segs) { if (Math.hypot(s[0] - TUM[0], s[1] - TUM[1], s[2] - TUM[2]) < .3) { const a = proj(s[0], s[1], s[2]), b = proj(s[3], s[4], s[5]); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); any = true; } }
-      if (any) { ctx.strokeStyle = rgba(warm ? COL.lime : COL.amber, 1); ctx.lineWidth = 4 * W / 808; ctx.stroke(); }
+      const dz = sl.z - TUM[2], tr = .12;
+      if (Math.abs(dz) < tr) {                                  // tumour: a small ellipsoid of rings inside the brain
+        const rr = Math.sqrt(tr * tr - dz * dz); ctx.beginPath();
+        for (let q = 0; q <= 40; q++) { const a = q / 40 * 6.283, p = proj(TUM[0] + Math.cos(a) * rr * 1.15, TUM[1] + Math.sin(a) * rr, sl.z); q ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
+        ctx.strokeStyle = rgba(warm ? COL.lime : COL.amber, .8); ctx.lineWidth = 1.8 * k; ctx.stroke();
+      }
     }
   }
 

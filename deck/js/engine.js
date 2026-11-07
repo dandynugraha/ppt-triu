@@ -156,6 +156,7 @@
     setCounter(n);
     if (location.hash !== '#' + n) history.replaceState(null, '', '#' + n);
     stage.classList.toggle('side-r', !!(ART && ART.sides[stopOf(n)] === 1));
+    stage.classList.toggle('side-c', !!(ART && ART.sides[stopOf(n)] === 2));
     const target = frameOf(n), from = cur, delta = Math.abs(target - from);
     if (STATIC || REDUCED || delta < 0.001 || prev === -1) {
       cur = target; draw();

@@ -186,3 +186,13 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - **For Dandy to check:** an any-atom 5 Å selection around the inhibitor in 2OH4 gives 24 residues; the paper reports "eight ATP-binding residues" — presumably a stricter criterion. The deck shows only the three residues the paper names.
 - **Font:** Inter Tight + Inter (OFL); Schibsted removed.
 - **Checks:** all passed (incl. "every slide has a visual 13/13"); 298/298 text runs ≥ 7:1; laptop-size review `shots/laptop_v9.png`; live entrance captures `shots/enter_*.png`.
+
+---
+
+## v10 — Dandy: "slide 1 bentuk otaknya kurang kelihatan (animasinya suka) · slide 5 multiplicity cuma kotak-kotak · positioning: terlalu rapat, kepotong, terlalu besar, jomplang · variasi gambar di tengah, teks kiri-kanan (yang cocok saja)"
+- **Brain:** contours now sagittal (each slice is a side profile) of a more anatomical SDF — cerebrum with gyri/sulci, rounded frontal pole, occipital lobe, hanging temporal lobe, lateral fissure, midline fissure, separate folded cerebellum, brainstem; slices that cut the surface tangentially or the midline are skipped; tumour drawn as its own small ring ellipsoid. Same animation (slow rotation + sweeping scan plane).
+- **Slide 5 multiplicity:** the 704 boxes are now 704 seeded coin flips, with the one row that contains "six heads in a row" highlighted (the script's own analogy; illustration of chance, not data). Labels verified verbatim (160 fragments).
+- **Layout:** text columns vertically centred against the visual (no top-heavy slides); footers lifted clear of the counter; "Zero survived." 168 → 128 px on one line; stat row → 2×2; slide-5 title 104 → 90 px; balanced wraps (slide 4 quote, backup A values); backup A comparison stacked.
+- **Centre layout** (visual in the middle, text left and right) for slide 3 (angiogenesis diagram) and slide 9 (PDB 2OH4) only; background stage and calm zones follow (new `c` stop flag in `art.js`).
+- `check.mjs`: text must stay inside its own column box (works for two columns); presenter test refocuses the page before typing (timing flake on software GL).
+- Results: all checks passed; 300/300 text runs ≥ 7:1.
