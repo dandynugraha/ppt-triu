@@ -161,3 +161,11 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - "Tri-U 2026" → "Tri-U 32" (logo fallbacks, intro title, README, page title).
 - Frames removed (`deck/frames/` deleted; v4/v1 kept in `build/` for reference). check.mjs updated for the live renderer; new `tools/textcontrast.*`, `tools/midframes.mjs`, `tools/motioncheck.mjs`.
 - Results: all checks passed; 122/122 text runs ≥ 8.05:1 on the real background; backup.pdf 14 pages.
+
+---
+
+## v7 — Dandy: "hilangkan kotak-kotaknya · perubahan warna jangan pas di tengah, dibikin diagonal · gambarnya kecil, tersebar, banyakin titiknya biar kebentuk · siap di-up ke GitHub Pages"
+- Background grid hairlines removed. Section colours now blend along a diagonal page coordinate (`wd = wy + (x-.5)*.62`), diagonal shading added, and the calm zone under the text has a slanted edge instead of a vertical seam.
+- Particles 7 000 → 10 000; ambient dust 250 only; forms topped up with jittered copies on the subject (denser shapes); subjects ~25–35 % larger, refitted so none is cut by the frame edge; crisper dot size. Auto-quality steps now 10 000 → 6 500 → 4 000.
+- Checks: all passed; 122/122 text runs ≥ 7:1 on the real background.
+- GitHub Pages: root `index.html` forwards to `deck/`, `.nojekyll`, `README.md`, `.gitignore` keeps private inputs (paper, script, reference images), build artefacts and superseded renderers out. Local repo initialised on `main` and committed; tested over HTTP (root → deck, WebGL on, navigation works, no errors). Not pushed (waiting for the repository link).
