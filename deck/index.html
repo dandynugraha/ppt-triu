@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tri-U 32 · Nugraha &amp; Kusuma</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/deck.css">
+</head>
+<body>
+<div id="stage" class="is-intro">
+  <canvas id="frames" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="hdr">
+    <div class="brand">
+      <!-- LOGO FILES: deck/assets/logo/ipb.png and deck/assets/logo/triu.png -->
+      <span class="logo-slot"><img src="assets/logo/ipb.png" alt="IPB University" data-fallback="IPB University"></span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="logo-slot"><img src="assets/logo/triu.png" alt="Tri-U" data-fallback="Tri-U 32"></span>
+      <span class="event" id="hdr-event"></span>
+    </div>
+  </header>
+  <div class="counter" id="counter"></div>
+
+  <main id="slides"></main>
+
+  <section class="intro" id="intro" aria-label="Intro">
+    <div class="intro-logos">
+      <span class="logo-slot big ipb"><img src="assets/logo/ipb.png" alt="IPB University" data-fallback="IPB University"></span>
+      <span class="intro-rule" aria-hidden="true"></span>
+      <span class="logo-slot big triu"><img src="assets/logo/triu.png" alt="Tri-U" data-fallback="Tri-U 32"></span>
+    </div>
+    <p class="intro-event" id="intro-event"></p>
+  </section>
+
+  <div class="loadline" id="loadline" aria-hidden="true"><i></i></div>
+  <div class="black" id="black" aria-hidden="true"></div>
+</div>
+<script src="js/art.js"></script>
+<script src="slides.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>

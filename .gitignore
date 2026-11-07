@@ -1,0 +1,22 @@
+# dependencies / generated
+node_modules/
+shots/
+build/
+triu-deck.zip
+assets/render/scene_v1.html
+assets/render/scene_v4.html
+
+# private inputs: unpublished paper, script, third-party reference images
+input/
+*.docx
+*.pdf
+!backup.pdf
+/*.png
+/*.PNG
+/*.jpg
+__pycache__/
+# superseded renderers (v1–v5 video-frame pipeline); the live deck uses deck/js/art.js
+assets/render/
+tools/render.mjs
+tools/compose_scene.py
+tools/midshots.mjs
