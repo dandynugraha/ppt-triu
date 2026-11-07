@@ -16,13 +16,13 @@ for (let i = 1; i < n; i++) {
     const out = [], el = document.querySelector('.slide.is-on');
     const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     while (w.nextNode()) { const t = w.currentNode; if (!t.textContent.trim()) continue;
-      const pe = t.parentElement; if (pe.closest('.card, .panel, mark')) continue;      // these sit on their own opaque surface
-      const cs = getComputedStyle(pe), rg = document.createRange(); rg.selectNodeContents(t);
-      for (const r of rg.getClientRects()) if (r.width > 2) out.push({ x: r.left, y: r.top, w: r.width, h: r.height, color: cs.color, size: parseFloat(cs.fontSize), text: t.textContent.trim().slice(0, 30) });
+      const pe = t.parentElement; if (pe.closest('.card, .panel, mark, .brand')) continue;      // these sit on their own opaque surface
+      const cs = getComputedStyle(pe), col = pe.closest('svg') ? getComputedStyle(pe).fill : cs.color, rg = document.createRange(); rg.selectNodeContents(t);
+      for (const r of rg.getClientRects()) if (r.width > 2) out.push({ x: r.left, y: r.top, w: r.width, h: r.height, color: col, size: parseFloat(cs.fontSize), text: t.textContent.trim().slice(0, 30) });
     }
     return out;
   });
-  await p.addStyleTag({ content: '#slides, .hdr, .counter { opacity: 0 !important; }' });
+  await p.addStyleTag({ content: '.col, .viz-svg text, .viz-cap, .hdr, .counter { opacity: 0 !important; }' });
   await p.screenshot({ path: resolve(root, `shots/tc/${String(i).padStart(2, '0')}_bg.png`) });
   await p.evaluate(() => document.querySelectorAll('style').forEach(s => { if (s.textContent.includes('opacity: 0 !important')) s.remove(); }));
 }

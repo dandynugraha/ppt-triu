@@ -1,54 +1,48 @@
-/* Every token traces to DESIGN.md (section in brackets). */
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-display: block; src: url("../fonts/schibsted-grotesk-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-display: block; src: url("../fonts/schibsted-grotesk-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 600; font-display: block; src: url("../fonts/schibsted-grotesk-latin-600-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 700; font-display: block; src: url("../fonts/schibsted-grotesk-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-display: block; src: url("../fonts/schibsted-grotesk-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-display: block; src: url("../fonts/schibsted-grotesk-latin-ext-500-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 600; font-display: block; src: url("../fonts/schibsted-grotesk-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: "Schibsted Grotesk"; font-weight: 700; font-display: block; src: url("../fonts/schibsted-grotesk-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Tokens v9 — see DESIGN.md (v9). Inter Tight (display) + Inter (text), OFL, bundled. */
+@font-face { font-family: "Inter Tight"; font-weight: 600; font-display: block; src: url("../fonts/inter-tight-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-weight: 700; font-display: block; src: url("../fonts/inter-tight-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+2212; }
+@font-face { font-family: "Inter Tight"; font-weight: 700; font-display: block; src: url("../fonts/inter-tight-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02FF, U+1E00-1EFF; }
+@font-face { font-family: "Inter Tight"; font-weight: 800; font-display: block; src: url("../fonts/inter-tight-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: block; src: url("../fonts/inter-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+2212, U+00B1; }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: italic; font-display: block; src: url("../fonts/inter-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: block; src: url("../fonts/inter-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+2212, U+00B1; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: block; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+2212, U+00B1; }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: block; src: url("../fonts/inter-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02FF, U+1E00-1EFF; }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: block; src: url("../fonts/inter-latin-ext-500-normal.woff2") format("woff2"); unicode-range: U+0100-02FF, U+1E00-1EFF; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: block; src: url("../fonts/inter-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-02FF, U+1E00-1EFF; }
 @font-face { font-family: "Noto Sans Thai"; font-weight: 500; font-display: block; src: url("../fonts/noto-sans-thai-thai-500-normal.woff2") format("woff2"); unicode-range: U+0E01-0E5B; }
 
 :root {
-  /* Colour [DESIGN.md › v5 dark field, from "contoh baru.jpg"] */
-  --paper: #04050B;        /* page / left of the field */
-  --lavender: #0B0E26;     /* subtle surface */
-  --card: #0E1230;         /* cards on the dark field */
-  --ink: #F4F6FF;          /* primary text */
-  --muted: #AEB6DA;        /* secondary text (10.2:1 on paper, 9.2:1 on card) */
+  /* colour */
+  --paper: #04050B;
+  --card: #0E1230;
+  --ink: #F4F6FF;
+  --muted: #C6CCEA;
   --rule: #2A3060;
   --hairline: #1C2350;
-  --violet: #9FB0FF;       /* accent text: numerals, labels (9.8:1) */
-  --violet-deep: #1E27C9;  /* panel dark end */
-  --periwinkle: #2A34F2;   /* electric blue, panel light end (white 7.3:1) */
-  --lilac: #46D8FF;        /* cyan glow (art only) */
-  --lime: #D9FA3F;         /* single highlight, dark text on it */
+  --violet: #9FB0FF;
+  --violet-deep: #1E27C9;
+  --periwinkle: #2A34F2;
+  --lime: #D9FA3F;
+  --cyan: #3FE0FF;
+  --magenta: #FF8AE6;
+  --amber: #FFC24B;
+  --slate: #B3BAE4;
   --mark-ink: #04050B;
-  --light-paper: #F8F9FB;  /* intro cover only */
-
-  /* Type [DESIGN.md › Type, v3: Schibsted Grotesk] */
-  --font: "Schibsted Grotesk", "Noto Sans Thai", system-ui, sans-serif;
-  --fs-display: 112px;  --lh-display: 0.98; --tr-display: -0.035em; --w-head: 500;
-  --fs-h1: 68px;        --lh-h1: 1.04;      --tr-h1: -0.025em;
-  --fs-title-long: 52px;--lh-title-long: 1.08; --tr-title-long: -0.02em;
-  --fs-number: 112px;   --lh-number: 0.95;  --tr-number: -0.04em;
-  --fs-h3: 30px;        --lh-h3: 1.15;      --tr-h3: -0.01em;
-  --fs-body: 25px;      --lh-body: 1.42;
-  --fs-label: 19px;     --tr-label: 0.01em;
-  --fs-micro: 18px;     --tr-micro: 0.02em;
-
-  /* Grid [DESIGN.md › Grid] */
+  --light-paper: #F8F9FB;
+  /* type */
+  --display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: var(--text);
+  /* grid */
   --stage-w: 1920px; --stage-h: 1080px;
   --margin-x: 112px; --margin-y: 72px; --gutter: 24px;
-  --text-col: 824px;            /* x 112–936 */
+  --text-col: 824px;
   --header-y: 56px;
-
-  /* Surfaces [DESIGN.md › Surfaces & detail] */
-  --radius: 22px; --radius-hl: 6px; --pill: 999px;
-  --shadow: none;
-  --grain-opacity: .04;
-
-  /* Motion [DESIGN.md › Motion character] */
+  /* surfaces */
+  --radius: 20px; --pill: 999px;
+  --grain-opacity: .03;
+  /* motion */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --in-ms: 220ms; --out-ms: 110ms; --stagger-ms: 50ms; --rise: 8px;
+  --in-ms: 620ms; --out-ms: 120ms; --stagger-ms: 80ms; --rise: 28px;
 }

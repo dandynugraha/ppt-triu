@@ -13,7 +13,8 @@ Live deck (GitHub Pages): open the site root, it forwards to `deck/`.
 - Backup: `backup.pdf`.
 
 ## How it is built
-- No dependencies, no network at runtime. `deck/js/art.js` draws the background (a scrolling page of gradients) and 10 000 particles live with WebGL; `deck/js/engine.js` handles navigation, presenter window and timers.
+- No dependencies, no network at runtime. `deck/js/art.js` draws the scrolling gradient background (WebGL); `deck/js/viz.js` draws the contour brain and the real PDB 2OH4 structure (`deck/js/pdb2oh4.js`); charts are SVG built from the paper's numbers; `deck/js/engine.js` handles navigation, presenter window and timers.
+- Fonts: Inter Tight + Inter (SIL OFL), bundled.
 - On-screen text is generated from the talk script and paper by `tools/ingest.py` → `tools/build_slides.py` (every fragment is checked verbatim against the sources). The source documents are kept out of this public repo.
 - Checks: `node tools/check.mjs`, `node tools/textcontrast.mjs && python tools/textcontrast.py`; PDF: `node tools/export.mjs`.
 - Design and decisions: `DESIGN.md`, `STORYBOARD.md`, `BUILD_LOG.md`.

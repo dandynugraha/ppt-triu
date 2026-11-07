@@ -159,3 +159,13 @@ Frame travel 1.6–3.4 s with a gentle in/out curve (Dandy: too fast); text arri
 - **Particle colours vary per subject**: brain cyan→violet→magenta with amber tumour; MRI teal; vessels pink→coral with amber core; pipeline cyan grid / teal+magenta helix / coral protein; checks teal grid + amber & lime lenses; 61 magenta flares; megaminx faces from a hue wheel (neighbours differ) with one lime face; twins slate vs amber/gold; protein rainbow with lime pocket; close brain amber→pink→violet.
 - **Measured**: every text run (122) against the actual rendered background ≥ 8.05:1 (`tools/textcontrast.mjs` + `.py`).
 - Header label "Tri-U 32" (was "Tri-U 2026").
+
+---
+
+## v9 — current (supersedes v5–v8 art/type notes; background page from v7 kept)
+**Why:** Dandy — dots everywhere read as AI-generic; some subjects made no sense (slide 6 "just a plate"); text treatments all the same (card / lime / blue box); wanted charts, a correct 2OH4 protein, and a bold, Apple-like font.
+- **Type:** Inter Tight 600/700/800 (display; tight, keynote-style) + Inter 400/500/600 + italic (text). Both OFL (SF Pro cannot be bundled; Inter is its closest open counterpart). Eyebrow labels: 15 px, +0.16 em, uppercase, lime rule.
+- **Visuals (one per slide, opposite the text):** 1/10 contour brain (axial slices, sweeping scan plane, amber/lime tumour); 2 waffle of the 91 patients (46 HIGH / 45 LOW); 3 angiogenesis schematic (tumour → signal → VEGFR-2 receivers → new vessels; bevacizumab blocks the signal); 4 pipeline infographic with real counts; 5 704-test grid + leakage split diagram; 6 bar chart 704 → 61 → 35 → 0; 7 AUC dot-and-interval chart (0.687 ± 0.081 vs 0.497, 95 % CI 0.346–0.648, 0.5 line, +0.190 bracket); 8 paired bars from Table 1; 9 & backup C the real PDB 2OH4 structure (C-alpha tube by secondary structure, inhibitor GIG ball-and-stick, Val914/Asp1044/Phe1045 labelled); backups A/B reuse the AUC and Table-1 charts.
+- **Text compositions differ per slide:** hero + giant stat (1), definition list + inline stat (2), filled big-numeral stepper (3), tri-colour giant title + bar quote (4), giant statement + pill tags (5), mega title + 4-up stat row (6), quote-led (7), callout box (8), lime ask with underline (9), letter-by-letter "Thank you." (10).
+- **Motion:** each title its own move (rise, wipe, slide, flip, scale, drop, split, reveal, letters); visuals draw themselves (bars grow, lines draw, dots pop, the nested AUC point travels from 0.687 to 0.497, signals flow from tumour to receivers).
+- **Colour:** accents cyan #3FE0FF, magenta #FF8AE6, amber #FFC24B, lime #D9FA3F, slate #B3BAE4; muted text #C6CCEA. Background darkens softly behind each visual (stage). Measured: 298/298 text runs (incl. chart labels) ≥ 7:1 on the rendered background.

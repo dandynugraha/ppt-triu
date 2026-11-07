@@ -176,3 +176,13 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - Reproduced at laptop size (1366×768, DPR 1.25, `tools/laptopshots.mjs`): dots were sub-pixel cores on a bright blob, back faces dimmed to 20 %, megaminx almost invisible; during travel the shapes burst into a wide cloud.
 - Fix (art only): larger point cores + minimum point size 2.6 px; depth dimming 20 % → 50 % floor; overall particle brightness +14 %; a soft darker "stage" in the background behind the subject; megaminx edges/cuts/fills brighter; travel burst reduced (bulge .55–1.05 → .16–.36, stagger .38 → .26) so shapes morph visibly instead of vanishing.
 - Before/after: `shots/laptop_before.png` vs `shots/laptop_after.png`. Checks pass; text contrast unchanged (≥ 7:1).
+
+---
+
+## v9 — Dandy: "kanan muncul lalu hilang · jangan bintik-bintik semua (AI generic), gabung gambar & grafik · slide 6 cuma lempengan · tulisan jangan sama semua · protein 2OH4 yang bener · font bold profesional / Apple style · buat gebrakan"
+- **Bug (right side vanishing):** the particle text-zone mask used 1920-px thresholds on a canvas that is smaller on laptops (and shrinks again when auto-quality lowers resolution), so art on the right was masked once travel ended. Particles are retired in v9, so the mask is gone; the background stage uses normalised coordinates.
+- **Art:** particles off (`PARTICLES = false`); new `deck/js/viz.js` (contour brain, PDB 2OH4) + SVG charts/diagrams generated in `tools/build_slides.py` from the paper's numbers. 37 new chart/diagram labels added to `ingest.py` and verified verbatim (157 fragments, 0 problems).
+- **PDB 2OH4:** downloaded from RCSB (public data) into the scratchpad; parsed chain A C-alpha (303), HELIX/SHEET, inhibitor GIG (36 atoms) → `deck/js/pdb2oh4.js`. Verified residue names: 914 VAL, 1044 ASP, 1045 PHE (as in the paper). Bug caught in review: the inhibitor was first written uncentred (49 Å from Val914); fixed, now 7.1 Å as deposited, with an assertion in the generator.
+- **For Dandy to check:** an any-atom 5 Å selection around the inhibitor in 2OH4 gives 24 residues; the paper reports "eight ATP-binding residues" — presumably a stricter criterion. The deck shows only the three residues the paper names.
+- **Font:** Inter Tight + Inter (OFL); Schibsted removed.
+- **Checks:** all passed (incl. "every slide has a visual 13/13"); 298/298 text runs ≥ 7:1; laptop-size review `shots/laptop_v9.png`; live entrance captures `shots/enter_*.png`.

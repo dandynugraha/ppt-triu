@@ -47,7 +47,9 @@ await page.goto(pathToFileURL(join(deck, 'index.html')).href);
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
 const n = await page.evaluate(() => window.DECK.slides.length);
 const st0 = await page.evaluate(() => window.__state());
-ok('WebGL art active with 10 000 particles', st0.webgl && st0.particles === 10000, JSON.stringify({ webgl: st0.webgl, particles: st0.particles }));
+ok('WebGL background + slide visuals active', st0.webgl && st0.viz, JSON.stringify({ webgl: st0.webgl, viz: st0.viz }));
+const vizCount = await page.evaluate(() => window.DECK.slides.filter(s => /class="viz"/.test(s.html)).length);
+ok('every slide has a visual (chart, diagram, structure or brain)', vizCount === 13, vizCount + ' / 13');
 ok('fonts loaded (Schibsted Grotesk)', await page.evaluate(() => document.fonts.check('600 68px "Schibsted Grotesk"')));
 
 // forward through every slide with keyboard
@@ -135,7 +137,7 @@ for (let i = 1; i < n; i++) {
   const o = await p3.evaluate(() => {
     const el = document.querySelector('.slide.is-on'); const sr = document.getElementById('stage').getBoundingClientRect();
     const s = sr.width / 1920; let bad = [];
-    el.querySelectorAll('*').forEach(c => { const r = c.getBoundingClientRect(); if (!r.width) return;
+    el.querySelectorAll('.col *').forEach(c => { const r = c.getBoundingClientRect(); if (!r.width) return;
       const right = el.classList.contains('side-r'), x0 = (r.left - sr.left) / s, x1 = (r.right - sr.left) / s;
       if ((right ? (x0 < 960 || x1 > 1820) : x1 > 960) || (r.bottom - sr.top) / s > 1008) bad.push(c.className || c.tagName); });
     return bad.slice(0, 3);

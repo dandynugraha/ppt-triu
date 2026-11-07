@@ -7,6 +7,7 @@
 (function () {
   'use strict';
   const NP = 10000, DUST = 250;
+  const PARTICLES = false;   // v9: particles retired (Dandy: too 'AI-generic'); background only
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const lerp = (a, b, t) => a + (b - a) * t;
   function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -196,17 +197,17 @@
 
   /* stops: form, screen centre, scale, yaw, pitch, side (0 = text left / art right, 1 = text right / art left) */
   const STOPS = [
-    { f: () => F_brain(false), cx: 1460, cy: 560, s: 170, yaw: -.3, pitch: .05, side: 0 },
-    { f: () => F_brain(false), cx: 1425, cy: 570, s: 405, yaw: -.35, pitch: .08, side: 0 },
-    { f: F_mri, cx: 480, cy: 545, s: 375, yaw: -.15, pitch: .1, side: 1 },
-    { f: F_vessels, cx: 1450, cy: 545, s: 400, yaw: .4, pitch: .15, side: 0 },
-    { f: F_pipeline, cx: 485, cy: 550, s: 290, yaw: .0, pitch: .12, side: 1 },
-    { f: () => F_grid(-1.05, 'lenses'), cx: 1440, cy: 590, s: 450, yaw: .25, pitch: 0, side: 0 },
-    { f: () => F_grid(-.25, 'dead'), cx: 480, cy: 545, s: 385, yaw: -.15, pitch: 0, side: 1 },
-    { f: F_megaminx, cx: 1395, cy: 575, s: 380, yaw: .5, pitch: .4, side: 0 },
-    { f: F_twins, cx: 500, cy: 560, s: 325, yaw: -.25, pitch: .08, side: 1 },
-    { f: F_protein, cx: 1450, cy: 545, s: 450, yaw: .3, pitch: .25, side: 0 },
-    { f: () => F_brain(true), cx: 500, cy: 575, s: 400, yaw: -.45, pitch: .1, side: 1 },
+    { f: () => F_brain(false), cx: 1404, cy: 570, s: 345, yaw: -.3, pitch: .05, side: 0 },
+    { f: () => F_brain(false), cx: 1404, cy: 570, s: 345, yaw: -.35, pitch: .08, side: 0 },
+    { f: F_mri, cx: 516, cy: 570, s: 345, yaw: -.15, pitch: .1, side: 1 },
+    { f: F_vessels, cx: 1404, cy: 570, s: 345, yaw: .4, pitch: .15, side: 0 },
+    { f: F_pipeline, cx: 516, cy: 570, s: 345, yaw: .0, pitch: .12, side: 1 },
+    { f: () => F_grid(-1.05, 'lenses'), cx: 1404, cy: 570, s: 345, yaw: .25, pitch: 0, side: 0 },
+    { f: () => F_grid(-.25, 'dead'), cx: 516, cy: 570, s: 345, yaw: -.15, pitch: 0, side: 1 },
+    { f: F_megaminx, cx: 1404, cy: 570, s: 345, yaw: .5, pitch: .4, side: 0 },
+    { f: F_twins, cx: 516, cy: 570, s: 345, yaw: -.25, pitch: .08, side: 1 },
+    { f: F_protein, cx: 1404, cy: 570, s: 345, yaw: .3, pitch: .25, side: 0 },
+    { f: () => F_brain(true), cx: 516, cy: 570, s: 345, yaw: -.45, pitch: .1, side: 1 },
   ];
   const NSTOP = STOPS.length;
 
@@ -244,7 +245,7 @@
       if (abs(dy) < 1.4){ vec2 d = vec2((f.x-b.x)*asp, dy*1.15); col += uBC[i]*exp(-dot(d,d)/(b.z*b.z))*b.w*.75; }
     }
     // calm, tinted (not black) zone under the text column
-    vec2 od = (f*uRes - uObj.xy)/uObj.z; col *= 1. - .5*exp(-dot(od,od)*.9);   // dim stage behind the subject
+    vec2 od = (f*uRes - uObj.xy)/uObj.z; col *= 1. - .64*exp(-dot(od,od)*.55);   // dim stage behind the subject
     float xs = f.x + (f.y - .5)*.16*(1.-2.*uSide);                            // slanted edge (diagonal, not a vertical seam)
     float txt = mix(1.-smoothstep(.50,.66,xs), smoothstep(.34,.50,xs), uSide);   // covers the text column (x 112–936 / 984–1808)
     col = mix(col, base*.32 + vec3(.022,.022,.065), txt*.80*(1.-uFree));
@@ -315,7 +316,7 @@
     // background constants
     gl.useProgram(progBg);
     SECT = SECTIONS.map(([base, blobs], k) => ({ base: hex(base), blobs: blobs.map(([x, y, r, c, w]) => [x, k + y, r, w, hex(c)]) }));
-    buildForms();
+    if (PARTICLES) buildForms();
     ok = true; return true;
   }
   const inOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -341,6 +342,7 @@
       gl.uniform4fv(U.bguB, B); gl.uniform3fv(U.bguBC, BC); gl.uniform3fv(U.bguBase, BASE); gl.uniform1f(U.bguSec0, s0); }
     gl.bindBuffer(gl.ARRAY_BUFFER, bufQuad); gl.enableVertexAttribArray(A.p); gl.vertexAttribPointer(A.p, 2, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.disableVertexAttribArray(A.p);
+    if (!PARTICLES) return;
     // particles
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.useProgram(progPt);
     const sway = Math.sin(time * Math.PI * 2 / 9) * .16, drift = time * .02;

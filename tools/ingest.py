@@ -182,6 +182,35 @@ EXTRA = {
         "wrong": f("I would be glad if someone tried to prove me wrong.")},
 }
 for _n, _d in EXTRA.items():
+    BODY[_n].update(_d)
+# v9 (Dandy: "masukin grafik dll") - chart / diagram labels, verbatim from paper or script
+VIZ = {
+    2: {"vz_high": f("46 HIGH", "(46 HIGH, 45 LOW)"), "vz_low": f("45 LOW", "(46 HIGH, 45 LOW)"),
+        "vz_split": f("KDR expression · median split", "the median split"), "vz_kdr": f("KDR expression", "KDR expression")},
+    3: {"vz_tumour": f("Tumour", "A tumour grows faster than its own blood supply."), "vz_signal": f("Signal", "a chemical signal"),
+        "vz_receiver": f("Receiver · VEGFR-2", "That receiver is called VEGFR-2."), "vz_vessel": f("New blood vessels", "new blood vessels"),
+        "vz_drug": f("Bevacizumab blocks the signal", "It works by blocking the signal")},
+    4: {"vz_mri": f("MRI · T1, T1-Gd, T2, FLAIR", "T1, T1-Gd, T2 and FLAIR"),
+        "vz_desc": f("704 pre-computed · 1,098 PyRadiomics descriptors", "704 pre-computed BraTS descriptors in 91 patients, and 1,098 re-extracted PyRadiomics descriptors in 86"),
+        "vz_rf": f("Random Forest · nested", "Random Forest classification was evaluated non-nested"),
+        "vz_rf2": f("nested", "and nested, with both confined to each outer training fold")},
+    5: {"vz_tests": f("704 tests", "We ran seven hundred and four tests"),
+        "vz_train": f("Training data", "using only the training data"), "vz_test": f("Test patients", "the test patients were never seen"),
+        "vz_all": f("Chosen using all the data", "or using all the data"), "vz_only": f("Chosen using only the training data", "using only the training data"),
+        "vz_mult": f("Multiplicity", "Multiplicity"), "vz_leak": f("Leakage", "The leak")},
+    6: {"vz_tested": f("Tested", "Tested"), "vz_nominal": f("Nominal", "Nominal"), "vz_chance": f("Expected by chance", "35 expected by chance"),
+        "vz_fdr": f("FDR q<0.05", "FDR q<0.05")},
+    7: {"vz_auc": f("AUC", "AUC"), "vz_nn": f("Non-nested", "Random Forest classification was evaluated non-nested"),
+        "vz_n": f("Nested", "nested evaluation of the same procedure gave 0.497"),
+        "vz_nnv": f("0.687 ± 0.081", "Non-nested evaluation gave AUC 0.687 ± 0.081"),
+        "vz_nv": f("0.497 · 95% CI 0.346–0.648", "0.497 (95% CI 0.346–0.648)"),
+        "vz_chance": f("0.5 means guessing", "Zero point five means guessing."), "vz_opt": f("+0.190", "an optimism of +0.190")},
+    8: {"vz_a": f("Pre-computed BraTS", "Pre-computed BraTS"), "vz_b": f("Re-extracted PyRadiomics", "Re-extracted PyRadiomics"),
+        "vz_tested": f("Tested", "Tested"), "vz_nominal": f("Nominal", "Nominal"), "vz_fdr": f("FDR q<0.05", "FDR q<0.05")},
+    9: {"vz_pdb": f("PDB 2OH4", "PDB: 2OH4"), "vz_v": f("Val914", "gatekeeper Val914"), "vz_d": f("Asp1044", "Asp1044/Phe1045"),
+        "vz_f": f("Phe1045", "Asp1044/Phe1045"), "vz_inh": f("Inhibitor", "the inhibitor")},
+}
+for _n, _d in VIZ.items():
     BODY[_n].update(_d)  # required by PRD 5.8, not a scientific claim
 
 BACKUP = [

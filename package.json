@@ -12,6 +12,8 @@
   "type": "commonjs",
   "devDependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/inter-tight": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
     "@fontsource/noto-sans-thai": "^5.3.0",
     "@fontsource/onest": "^5.3.1",

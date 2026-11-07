@@ -40,7 +40,11 @@
   let clock0 = performance.now(), frozen = STATIC || REDUCED;
   const artOk = ART && ART.init(canvas);
   if (!artOk) stage.classList.add('no-webgl');
-  function draw() { if (artOk) ART.render(cur, frozen ? 0 : (performance.now() - clock0) / 1000, DPR); }
+  function draw() {
+    const t = frozen ? 0 : (performance.now() - clock0) / 1000;
+    if (artOk) ART.render(cur, t, DPR);
+    if (window.VIZ && typeof idx === 'number' && idx > 0 && els[idx]) VIZ.render(els[idx], t);   // v9 canvas visuals of the current slide
+  }
   const stopOf = n => Math.min(n, (ART ? ART.stops : 11) - 1);
   const frameOf = n => stopOf(n);
   const allLoaded = Promise.resolve();
@@ -295,7 +299,7 @@
     window.__ready = true;
     return idx;
   };
-  window.__state = () => ({ idx, pos: cur, frame: cur, target: frameOf(idx), tweening: !!tween, inHold: !tween && Math.abs(cur - frameOf(idx)) < 1e-6, webgl: !!artOk, particles: ART ? ART.particles : 0, quality });
+  window.__state = () => ({ idx, pos: cur, frame: cur, target: frameOf(idx), tweening: !!tween, inHold: !tween && Math.abs(cur - frameOf(idx)) < 1e-6, webgl: !!artOk, viz: !!window.VIZ, quality });
 
   /* ---------- start ---------- */
   fit();
