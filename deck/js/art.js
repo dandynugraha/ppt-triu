@@ -198,7 +198,8 @@
   /* stops: form, screen centre, scale, yaw, pitch, side (0 = text left / art right, 1 = text right / art left) */
   const STOPS = [
     { f: () => F_brain(false), cx: 1404, cy: 570, s: 345, yaw: -.3, pitch: .05, side: 0 },
-    { f: () => F_brain(false), cx: 1404, cy: 570, s: 345, yaw: -.35, pitch: .08, side: 0 },
+    { f: () => F_brain(false), cx: 960, cy: 880, s: 520, yaw: -.35, pitch: .08, side: .5, t: 1 },   // 1: title on top, CMU campus below
+    { f: () => F_brain(false), cx: 1404, cy: 570, s: 345, yaw: -.35, pitch: .08, side: 0 },   // 1b: glioblastoma
     { f: F_mri, cx: 516, cy: 570, s: 345, yaw: -.15, pitch: .1, side: 1 },
     { f: F_vessels, cx: 960, cy: 570, s: 345, yaw: .4, pitch: .15, side: .5, c: 1 },
     { f: F_pipeline, cx: 516, cy: 570, s: 345, yaw: .0, pitch: .12, side: 1 },
@@ -214,6 +215,7 @@
   /* background page: per section a coloured (never black) base + off-centre light blobs, mostly on the art side */
   const SECTIONS = [
     ['#10154A', [[.80, .32, .45, '#3D5BFF', .55], [.97, .86, .35, '#7B4DFF', .35], [.60, .93, .30, '#2FB8FF', .20]]],
+    ['#1A1040', [[.70, .70, .48, '#FF8A3D', .34], [.30, .80, .40, '#E040C8', .30], [.88, .20, .30, '#5B3DFF', .26]]],   // 1: Chiang Mai dusk
     ['#150E3C', [[.84, .24, .42, '#7B4DFF', .55], [.99, .78, .38, '#E040C8', .40], [.58, .96, .30, '#3D5BFF', .22]]],
     ['#06293A', [[.20, .30, .45, '#16C8C0', .45], [.03, .84, .36, '#2E6BFF', .38], [.44, .08, .26, '#3FE0FF', .18]]],
     ['#260A33', [[.80, .30, .42, '#D0285E', .45], [.97, .86, .35, '#7B4DFF', .32], [.60, .97, .30, '#FF7A59', .16]]],
@@ -230,7 +232,7 @@
   let SECT = [], lastSec = -9, drawCount = NP, gl = null, canvas = null, progBg, progPt, bufQuad, formBufs = [], swirlBuf, ok = false, U = {}, A = {};
   const VS_BG = 'attribute vec2 p; varying vec2 v; void main(){ v = p*.5+.5; gl_Position = vec4(p,0.,1.); }';
   const FS_BG = `precision highp float;
-  varying vec2 v; uniform vec2 uRes; uniform float uScroll; uniform float uSide; uniform float uFree; uniform vec3 uObj; uniform float uCenter;
+  varying vec2 v; uniform vec2 uRes; uniform float uScroll; uniform float uSide; uniform float uFree; uniform vec3 uObj; uniform float uCenter; uniform float uTop;
   uniform vec4 uB[9]; uniform vec3 uBC[9]; uniform vec3 uBase[3]; uniform float uSec0;
   void main(){
     vec2 f = vec2(v.x, 1.-v.y);
@@ -250,6 +252,8 @@
     float txt = mix(1.-smoothstep(.50,.66,xs), smoothstep(.34,.50,xs), uSide);   // covers the text column (x 112–936 / 984–1808)
     float edges = max(1.-smoothstep(.27,.36,f.x), smoothstep(.64,.73,f.x));      // centre layout: text on both sides
     txt = mix(txt, edges, uCenter);
+    float topband = (1.-smoothstep(.44,.60,f.y)) * (1.-smoothstep(.40,.50,abs(f.x-.5)));   // centred title on top
+    txt = mix(txt, topband, uTop);
     col = mix(col, base*.32 + vec3(.022,.022,.065), txt*.80*(1.-uFree));
     gl_FragColor = vec4(col, 1.);
   }`;
@@ -311,7 +315,7 @@
     if (!gl) return false;
     progBg = compile(VS_BG, FS_BG); progPt = compile(VS_PT, FS_PT);
     bufQuad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufQuad); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    for (const n of ['uRes', 'uScroll', 'uSide', 'uB', 'uBC', 'uBase', 'uSec0', 'uFree', 'uObj', 'uCenter']) U['bg' + n] = gl.getUniformLocation(progBg, n);
+    for (const n of ['uRes', 'uScroll', 'uSide', 'uB', 'uBC', 'uBase', 'uSec0', 'uFree', 'uObj', 'uCenter', 'uTop']) U['bg' + n] = gl.getUniformLocation(progBg, n);
     for (const n of ['uM', 'uYaw', 'uPitch', 'uTime', 'uSide', 'uDpr', 'uCam', 'uRes', 'uFree']) U['pt' + n] = gl.getUniformLocation(progPt, n);
     for (const n of ['aPA', 'aCA', 'aSA', 'aPB', 'aCB', 'aSB', 'aSw']) A[n] = gl.getAttribLocation(progPt, n);
     A.p = gl.getAttribLocation(progBg, 'p');
@@ -333,7 +337,7 @@
     // background
     gl.disable(gl.BLEND); gl.useProgram(progBg);
     const free = Math.sin(Math.PI * clamp(m)) * (a.side !== b.side ? 1 : .6);   // 0 at every stop
-    gl.uniform2f(U.bguRes, W, H); gl.uniform1f(U.bguScroll, pos); gl.uniform1f(U.bguSide, side); gl.uniform1f(U.bguFree, free); gl.uniform1f(U.bguCenter, lerp(a.c || 0, b.c || 0, cm));
+    gl.uniform2f(U.bguRes, W, H); gl.uniform1f(U.bguScroll, pos); gl.uniform1f(U.bguSide, side); gl.uniform1f(U.bguFree, free); gl.uniform1f(U.bguCenter, lerp(a.c || 0, b.c || 0, cm)); gl.uniform1f(U.bguTop, lerp(a.t || 0, b.t || 0, cm));
     gl.uniform3f(U.bguObj, lerp(a.cx, b.cx, cm) * sc, lerp(a.cy, b.cy, cm) * sc, lerp(a.s, b.s, cm) * sc * 1.25);
     // only the three page sections that can be on screen are sent (keeps the shader light)
     const s0 = Math.max(0, Math.min(SECT.length - 3, Math.floor(pos) - 1 + (pos - Math.floor(pos) > .5 ? 1 : 0)));
@@ -366,5 +370,5 @@
   }
   /* quality 0 = full (7 000), 1 = 4 800, 2 = 3 200 particles: used by the engine's automatic laptop fallback */
   function setQuality(q) { drawCount = [NP, 6500, 4000][Math.max(0, Math.min(2, q))]; }
-  window.ART = { init, render, setQuality, stops: NSTOP, sides: STOPS.map(s => s.c ? 2 : s.side), get ok() { return ok; }, get particles() { return drawCount; } };
+  window.ART = { init, render, setQuality, stops: NSTOP, sides: STOPS.map(s => s.t ? 3 : s.c ? 2 : s.side), get ok() { return ok; }, get particles() { return drawCount; } };
 })();

@@ -10,13 +10,13 @@ OPEN
   then open http://localhost:8000
 
 LOGOS
-  Put ipb.png and triu.png in deck/assets/logo/ (exact names). No rebuild needed.
+  Put ipb.png, triu.png and cmu.png in deck/assets/logo/ (exact names). No rebuild needed.
 
 KEYS
   Next ........ Enter, Space, Right, Down, PageDown (clicker forward)
   Previous .... Backspace, Left, Up, PageUp (clicker back)
   Home / End .. intro / last main slide (10)
-  Number+Enter  jump to that slide (11-13 are backup slides for Q&A)
+  Number+Enter  jump to that slide (12-14 are backup slides for Q&A)
   F or F5 ..... fullscreen
   B or . ...... black screen (press again to return)
   N ........... presenter window (notes EN + ID, bridge line, slide timer, total timer)

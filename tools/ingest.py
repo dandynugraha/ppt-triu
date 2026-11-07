@@ -164,7 +164,16 @@ BODY = {
 BODY[1]["credit"] = {"text": "Background: illustrative animation, not data.", "src": "__deck_credit__"}
 # v2 (Dandy: "terlihat minim text") - supporting lines, all verbatim from script or paper
 EXTRA = {
-    1: {"hook": f("Is the answer already inside that picture?")},
+    1: {"hook": f("Is the answer already inside that picture?"),
+        # v11: the opening is split - slide 1 (title, CMU campus) and a new glioblastoma slide (script slide 1, second half)
+        "g_kicker": f("Glioblastoma", "Glioblastoma is the most aggressive primary brain tumour"),
+        "g_title": f("Fifteen months."),
+        "g_l1": f("That is how long most people live after they are told they have this brain cancer."),
+        "g_l2": f("It is called glioblastoma, and it is the most dangerous one we know."),
+        "g_l3": f("There is one drug that helps some of these patients. For the rest, it does nothing."),
+        "g_l4": f("And today, the only way to find out which group a patient is in is surgery."),
+        "campus": f("Chiang Mai University", "Chiang Mai University, Thailand"),
+        "venue": f("Chiang Mai University, Thailand")},
     2: {"noscan": f("No new scans, no new procedures, nothing a hospital does not already have.")},
     3: {"why": f("That is why KDR is our target, and why reading it without surgery would be useful.")},
     4: {"m1x": f("How rough the edge of the tumour is. How round the shape is. Whether the brightness is even or uneven."),

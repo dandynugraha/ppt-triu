@@ -82,6 +82,11 @@
     return el;
   });
 
+  host.querySelectorAll('.logo-slot img').forEach(img => {
+    const fail = () => { const sp = document.createElement('span'); sp.className = 'fallback'; sp.textContent = img.dataset.fallback; img.replaceWith(sp); };
+    if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail, { once: true });
+  });
+
   /* ---------- intro sequence (flow.PNG) ---------- */
   function measureIntro() {
     const ipb = intro.querySelector('.ipb'), box = intro.querySelector('.intro-logos');
@@ -157,6 +162,7 @@
     if (location.hash !== '#' + n) history.replaceState(null, '', '#' + n);
     stage.classList.toggle('side-r', !!(ART && ART.sides[stopOf(n)] === 1));
     stage.classList.toggle('side-c', !!(ART && ART.sides[stopOf(n)] === 2));
+    stage.classList.toggle('side-t', !!(ART && ART.sides[stopOf(n)] === 3));
     const target = frameOf(n), from = cur, delta = Math.abs(target - from);
     if (STATIC || REDUCED || delta < 0.001 || prev === -1) {
       cur = target; draw();

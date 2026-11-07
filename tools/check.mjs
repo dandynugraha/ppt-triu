@@ -48,8 +48,8 @@ await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000
 const n = await page.evaluate(() => window.DECK.slides.length);
 const st0 = await page.evaluate(() => window.__state());
 ok('WebGL background + slide visuals active', st0.webgl && st0.viz, JSON.stringify({ webgl: st0.webgl, viz: st0.viz }));
-const vizCount = await page.evaluate(() => window.DECK.slides.filter(s => /class="viz"/.test(s.html)).length);
-ok('every slide has a visual (chart, diagram, structure or brain)', vizCount === 13, vizCount + ' / 13');
+const vizCount = await page.evaluate(() => window.DECK.slides.filter(s => /class="viz[ "]/.test(s.html)).length);
+ok('every slide has a visual (chart, diagram, structure, brain or campus)', vizCount === 14, vizCount + ' / 14');
 ok('fonts loaded (Schibsted Grotesk)', await page.evaluate(() => document.fonts.check('600 68px "Schibsted Grotesk"')));
 
 // forward through every slide with keyboard
@@ -88,7 +88,7 @@ await page.keyboard.press('1'); await page.keyboard.press('2'); await page.keybo
 await page.waitForFunction(() => window.__state().idx === 12, null, { timeout: 8000 }).catch(() => {});
 ok('typing 12 + Enter jumps to slide 12', (await page.evaluate(() => window.__state().idx)) === 12);
 await page.keyboard.press('End');
-ok('End goes to the last main slide (10)', (await page.evaluate(() => window.__state().idx)) === 10);
+ok('End goes to the last main slide (11)', (await page.evaluate(() => window.__state().idx)) === 11);
 await page.keyboard.press('b');
 ok('B blacks the screen', await page.evaluate(() => document.getElementById('black').classList.contains('on')));
 await page.keyboard.press('b');
@@ -104,7 +104,7 @@ if (pop) {
   const txt = await pop.evaluate(() => document.body.innerText);
   ok('presenter window opens with notes + timers', /Thank you/.test(txt) && /total/i.test(txt) && /slide/i.test(txt), txt.slice(0, 80).replace(/\n/g, ' '));
   await pop.keyboard.press('PageUp');
-  ok('keys in presenter window control the deck', (await page.evaluate(() => window.__state().idx)) === 9);
+  ok('keys in presenter window control the deck', (await page.evaluate(() => window.__state().idx)) === 10);
   await pop.close();
 } else ok('presenter window opens with notes + timers', false, 'no popup');
 

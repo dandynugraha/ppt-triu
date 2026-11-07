@@ -2,6 +2,7 @@ Put the two logo files in THIS folder, with exactly these names:
 
   ipb.png    -> IPB University logo
   triu.png   -> Tri-U 32 logo
+  cmu.png    -> Chiang Mai University logo (official file; shown on slide 1)
 
 Transparent PNG, at least 400 px tall, works best (shown at 200 px on the intro, 40 px in the header).
 Until the files exist, the deck shows the names "IPB University" and "Tri-U 32" as text instead.

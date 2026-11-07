@@ -15,7 +15,8 @@ S = {s["n"]: s for s in C["slides"]}
 e = html.escape
 T = {0: 0.00, 1: 0.05, 2: 0.17, 3: 0.32, 4: 0.46, 5: 0.53, 6: 0.60, 7: 0.66, 8: 0.86, 9: 0.93, 10: 1.00, 11: 1.00, 12: 1.00, 13: 1.00}
 SIDE = {n: ("r" if n in (2, 4, 6, 8, 10, 11, 12, 13) else "c" if n in (3, 9) else "l") for n in range(1, 14)}
-FX = {1: "words", 2: "wipe", 3: "slide", 4: "flip", 5: "scale", 6: "count", 7: "strike", 8: "split", 9: "panel", 10: "letters",
+SIDE[1] = "t"; SIDE["1b"] = "l"
+FX = {"1b": "count", 1: "words", 2: "wipe", 3: "slide", 4: "flip", 5: "scale", 6: "count", 7: "strike", 8: "split", 9: "panel", 10: "letters",
       11: "fade", 12: "fade", 13: "fade"}
 
 def b(n, k): return e(S[n]["body"][k])
@@ -190,15 +191,74 @@ def viz_protein(labels=True):
               f' <span class="muted">— VEGFR-2 kinase domain, {b(9, "vz_pdb")}</span></p>')
     return f'<canvas class="viz-canvas" data-viz="protein{"" if labels else "-plain"}" width="808" height="760"></canvas>' + legend
 
-VIZ = {1: viz_canvas("brain"), 2: viz_waffle(), 3: viz_angio(), 4: viz_pipeline(), 5: viz_checks(), 6: viz_bars(), 7: viz_auc(),
+
+def viz_campus():
+    """Chiang Mai University, stylised: Doi Suthep ridges with the golden chedi on the summit, the campus with
+    Lanna-style tiered roofs and trees, Ang Kaew reservoir, a low sun. Illustration, not a photo or a logo.
+    The CMU logo itself is NOT drawn: it is the official file deck/assets/logo/cmu.png (text fallback)."""
+    W, H = 1920, 580
+    def ridge(points, cls, d):
+        pts = " ".join(f"{x},{y}" for x, y in points)
+        return f'<polyline class="ridge {cls} draw" pathLength="1" points="{pts}" style="--d:{d}"/>'
+    back = [(0,236),(160,224),(320,214),(470,226),(620,208),(760,200),(900,196),(1040,180),(1180,160),(1300,128),(1400,104),(1450,92),(1500,102),(1600,132),(1720,168),(1840,190),(1920,200)]
+    far = [(0,196),(200,184),(420,170),(600,182),(820,160),(1000,150),(1180,138),(1320,150),(1560,140),(1760,156),(1920,150)]
+    mid = [(0,300),(140,288),(300,276),(460,288),(600,268),(760,258),(900,268),(1040,252),(1200,236),(1360,252),(1520,270),(1700,262),(1920,280)]
+    fill_back = "M0,580 L" + " L".join(f"{x},{y}" for x, y in back) + " L1920,580 Z"
+    fill_mid = "M0,580 L" + " L".join(f"{x},{y}" for x, y in mid) + " L1920,580 Z"
+    def lanna(x, y, w, tiers, d):
+        out = [f'<g class="bld pop" style="--d:{d}">']
+        out.append(f'<rect class="wall" x="{x - w*.42:.0f}" y="{y}" width="{w*.84:.0f}" height="46"/>')
+        for t in range(tiers):
+            ww, yy = w * (1 - t * .22), y - t * 22
+            out.append(f'<path class="roof" d="M{x - ww/2:.0f},{yy} L{x - ww*.32:.0f},{yy-22} L{x + ww*.32:.0f},{yy-22} L{x + ww/2:.0f},{yy} Z"/>')
+        out.append(f'<path class="kalae" d="M{x-10},{y - tiers*22 - 12} L{x},{y - tiers*22 - 26} L{x+10},{y - tiers*22 - 12}"/>')
+        for k in range(5):
+            out.append(f'<rect class="win" x="{x - w*.36 + k * w*.16:.0f}" y="{y + 14}" width="{w*.08:.0f}" height="18" style="--d:{d+k}"/>')
+        out.append('</g>')
+        return "".join(out)
+    def block(x, y, w, h, d):
+        wins = "".join(f'<rect class="win" x="{x + 10 + c*26}" y="{y + 12 + r*22}" width="14" height="12" style="--d:{d+r+c}"/>'
+                       for r in range(int((h-16)//22)) for c in range(int((w-14)//26)))
+        return f'<g class="bld pop" style="--d:{d}"><rect class="wall" x="{x}" y="{y}" width="{w}" height="{h}"/>{wins}</g>'
+    def tree(x, y, r, d):
+        return f'<g class="tree pop" style="--d:{d}"><line x1="{x}" y1="{y}" x2="{x}" y2="{y+26}"/><circle cx="{x}" cy="{y - r*.6:.0f}" r="{r}"/></g>'
+    water = "".join(f'<line class="ripple" x1="{x0}" y1="{y}" x2="{x0 + ln}" y2="{y}" style="--d:{i}"/>'
+                    for i, (x0, y, ln) in enumerate([(120,500,260),(520,512,180),(860,498,320),(1300,508,220),(1600,520,200),(300,540,240),(980,548,280),(1440,556,240),(60,562,160)]))
+    chedi = ('<g class="chedi pop" style="--d:6" transform="translate(1450,92) scale(1.5)">'
+             '<path d="M0,-46 L5,-22 L9,-10 L14,0 L-14,0 L-9,-10 L-5,-22 Z"/><rect x="-18" y="0" width="36" height="6"/></g>')
+    inner = ('<defs><radialGradient id="dusk" cx="84%" cy="22%" r="60%"><stop offset="0" stop-color="#FFC24B" stop-opacity=".55"/>'
+             '<stop offset=".45" stop-color="#FF6FA8" stop-opacity=".18"/><stop offset="1" stop-color="#FF6FA8" stop-opacity="0"/></radialGradient>'
+             '<linearGradient id="mtnB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B2A86"/><stop offset="1" stop-color="#140F3A"/></linearGradient>'
+             '<linearGradient id="mtnM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25205E"/><stop offset="1" stop-color="#0C0B26"/></linearGradient>'
+             '<linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A6A"/><stop offset="1" stop-color="#070A20"/></linearGradient></defs>'
+             f'<rect x="0" y="0" width="{W}" height="{H}" fill="url(#dusk)" class="glow"/>'
+             '<circle class="sun" cx="1700" cy="128" r="56"/>' + ridge(far, "f", 0) +
+             f'<path class="mfill b" d="{fill_back}"/>' + ridge(back, "b", 0) +
+             "".join(ridge([(x, y + k*16 + (k*k)*2) for x, y in back], "c", 1) for k in range(1, 4)) + chedi +
+             f'<path class="mfill m" d="{fill_mid}"/>' + ridge(mid, "m", 1) +
+             tree(140, 380, 30, 2) + tree(210, 392, 22, 3) + block(260, 330, 170, 92, 3) + tree(470, 386, 26, 4) +
+             lanna(640, 376, 230, 3, 4) + tree(800, 388, 24, 5) + block(860, 318, 210, 104, 5) + tree(1110, 384, 28, 6) +
+             lanna(1290, 380, 190, 2, 6) + tree(1430, 390, 22, 7) + block(1480, 340, 150, 82, 7) + tree(1680, 382, 30, 8) + tree(1760, 394, 20, 8) +
+             f'<rect class="shore" x="0" y="422" width="{W}" height="4"/>'
+             f'<rect x="0" y="426" width="{W}" height="{H-426}" fill="url(#lake)"/>' + water)
+    return (f'<svg class="viz-svg campus" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMax slice" role="img" '
+            f'aria-label="Illustration of Chiang Mai University: Doi Suthep with its golden chedi, the campus and Ang Kaew reservoir">{inner}</svg>'
+            '<div class="cmu-badge"><span class="logo-slot cmu"><img src="assets/logo/cmu.png" alt="Chiang Mai University" '
+            f'data-fallback="{b(1, "campus")}"></span><span class="cmu-sub">{b(1, "venue")}</span></div>')
+
+VIZ = {1: viz_campus(), "1b": viz_canvas("brain"), 2: viz_waffle(), 3: viz_angio(), 4: viz_pipeline(), 5: viz_checks(), 6: viz_bars(), 7: viz_auc(),
        8: viz_pairs(), 9: viz_protein(), 10: viz_canvas("brain-warm"), 11: viz_auc(), 12: viz_pairs(), 13: viz_protein()}
 
 # ---------------------------------------------------------------- text compositions (each slide different)
 L = {}
-L[1] = (eyebrow(1) + title(1, "hero", "KDR/VEGFR-2", "acc cyan") +
-        a(3, f'<p class="byline"><strong>{b(1,"authors")}</strong> &nbsp;·&nbsp; {b(1,"affil")}</p>') +
-        a(4, f'<div class="stat-hero">{num("15")}<span class="unit">months</span><span class="lbl">{b(1,"stat_label")}</span></div>') +
-        a(5, f'<p class="credit">{b(1,"credit")}</p>', "foot"))
+L[1] = (eyebrow(1) + title(1, "hero centre", "KDR/VEGFR-2", "acc cyan") +
+        a(3, f'<p class="byline"><strong>{b(1,"authors")}</strong><br>{b(1,"affil")}</p>'))
+L["1b"] = (a(0, b(1, "g_kicker"), "eyebrow") +
+           a(1, f'<div class="stat-hero top">{num("15")}<span class="unit">months</span><span class="lbl">{b(1,"stat_label")}</span></div>') +
+           a(3, f'<p class="lead">{b(1,"g_l1")} {b(1,"g_l2")}</p>') +
+           a(4, f'<p class="quote">{b(1,"g_l3")}</p>') +
+           a(5, f'<p class="callout">{b(1,"g_l4")}</p>') +
+           a(6, f'<p class="credit">{b(1,"credit")}</p>', "foot"))
 L[2] = (eyebrow(2) + title(2, "h-l", "not from tissue.", "acc underline") +
         '<dl class="defs">' + a(3, f'<dt>{b(2,"c1h")}</dt><dd>{b(2,"c1")}</dd>', "def") + a(4, f'<dt>{b(2,"c2h")}</dt><dd>{b(2,"c2")}</dd>', "def") + '</dl>' +
         a(5, f'<p class="inline-stat">{num(b(2,"n"))}<span>{b(2,"nl")}</span></p>') + a(6, f'<p class="quote">{b(2,"noscan")}</p>'))
@@ -248,20 +308,30 @@ L[13] = (eyebrow(13) + title(13, "h-m") +
 
 RIGHT = {3: R3, 9: R9}
 def compose(n):
+    if SIDE[n] == "t":   # title centred on top, illustration across the bottom
+        return f'<div class="col col-top">{L[n]}</div><div class="viz viz-bottom">{VIZ[n]}</div>'
     if n in RIGHT:   # visual in the middle, text on both sides
         return f'<div class="col col-l">{L[n]}</div><div class="viz">{VIZ[n]}</div><div class="col col-r">{RIGHT[n]}</div>'
     return f'<div class="col">{L[n]}</div><div class="viz">{VIZ[n]}</div>'
 
-slides = [{"n": 0, "t": T[0], "kind": "intro", "title": "Intro: IPB University · Tri-U 32", "label": "Intro", "html": "",
+slides = [{"n": 0, "t": 0, "kind": "intro", "title": "Intro: IPB University \u00b7 Tri-U 32", "label": "Intro", "html": "",
            "notes": "Logo IPB masuk, lalu bergeser ke kiri dan logo Tri-U masuk. Tekan Enter untuk masuk ke slide 1.",
            "notes_id": "", "bridge": "", "direction": "", "budget": 0, "time": "", "fx": "fade", "side": "l"}]
-for n in range(1, 14):
-    s = S[n]
-    slides.append({"n": n, "t": T[n], "kind": "backup" if n > 10 else ("close" if n == 10 else "slide"),
-                   "title": s["title"], "label": s["label"], "html": compose(n), "notes": s["notes"], "notes_id": s["notes_id"],
-                   "bridge": s["bridge"], "direction": s["instructions"], "budget": s["budget_s"], "time": s["time"],
-                   "fx": FX[n], "side": SIDE[n]})
-deck = {"event": C["talk"]["event"], "venue": C["talk"]["venue"], "slot_s": C["talk"]["slot_s"], "main_count": 10, "slides": slides}
+s1 = S[1]
+cut_en, cut_id = s1["notes"].index("Fifteen months."), s1["notes_id"].index("Lima belas bulan.")
+dir1 = s1["instructions"]; cut_dir = dir1.index("Kalimat soal operasi")
+SPLIT = {1: dict(title=s1["title"], label="Opening", notes=s1["notes"][:cut_en].strip(), notes_id=s1["notes_id"][:cut_id].strip(),
+                 bridge="", direction=dir1[:cut_dir].strip(), budget=8, time="0:00\u20130:08"),
+         "1b": dict(title=s1["body"]["g_title"], label="Opening \u00b7 glioblastoma", notes=s1["notes"][cut_en:].strip(),
+                    notes_id=s1["notes_id"][cut_id:].strip(), bridge=s1["bridge"], direction=dir1[cut_dir:].strip(),
+                    budget=s1["budget_s"] - 8, time="0:08\u20130:55")}
+ORDER = [1, "1b"] + list(range(2, 14))
+for pos, key in enumerate(ORDER, start=1):
+    src = SPLIT.get(key) or dict(title=S[key]["title"], label=S[key]["label"], notes=S[key]["notes"], notes_id=S[key]["notes_id"],
+                                bridge=S[key]["bridge"], direction=S[key]["instructions"], budget=S[key]["budget_s"], time=S[key]["time"])
+    kind = "backup" if key in (11, 12, 13) else ("close" if key == 10 else "slide")
+    slides.append({"n": pos, "key": str(key), "kind": kind, "html": compose(key), "fx": FX[key], "side": SIDE[key], **src})
+deck = {"event": C["talk"]["event"], "venue": C["talk"]["venue"], "slot_s": C["talk"]["slot_s"], "main_count": 11, "slides": slides}
 (ROOT / "deck/slides.js").write_text("/* generated by tools/build_slides.py from build/content.json - do not edit by hand */\nwindow.DECK = "
                                       + json.dumps(deck, ensure_ascii=False, indent=1) + ";\n", encoding="utf-8")
 print("slides.js:", len(slides), "entries")

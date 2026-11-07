@@ -309,3 +309,57 @@ p { font-size: 24px; line-height: 1.5; color: var(--ink); max-width: 32em; }
 .side-c .viz { left: 584px; width: 752px; }
 .side-c .viz-svg { width: 752px; height: 800px; }
 .side-c .viz-canvas { width: 752px; height: 708px; }
+
+/* ---------- v11: slide 1 = centred title + Chiang Mai University campus ---------- */
+.side-t .col-top { left: 230px; width: 1460px; top: 140px; bottom: auto; justify-content: flex-start; align-items: center; text-align: center; }
+.col-top .eyebrow { justify-content: center; }
+.col-top .t { text-align: center; }
+.hero.centre { font-size: 58px; line-height: 1.05; max-width: 22em; }
+.col-top .byline { margin-top: 26px; }
+.viz.viz-bottom { left: 0; top: 500px; width: 1920px; height: 580px; }
+.viz-bottom .viz-svg.campus { width: 1920px; height: 580px; }
+/* campus drawing */
+.campus .glow { opacity: .9; }
+.campus .sun { fill: #FFC24B; opacity: .9; }
+.campus .mfill.b { fill: url(#mtnB); } .campus .mfill.m { fill: url(#mtnM); }
+.campus .ridge { fill: none; stroke-width: 2.4; stroke-linejoin: round; } .campus .ridge.b { stroke: #9FB0FF; } .campus .ridge.m { stroke: #C6CCEA; opacity: .55; }
+.campus .chedi path, .campus .chedi rect { fill: #FFC24B; }
+.campus .wall { fill: #17183F; stroke: #6E79C8; stroke-width: 1.6; }
+.campus .roof { fill: #2A2468; stroke: #FF8AE6; stroke-width: 2; stroke-linejoin: round; }
+.campus .kalae { fill: none; stroke: #FFC24B; stroke-width: 3; stroke-linecap: round; }
+.campus .win { fill: #FFC24B; opacity: .85; }
+.campus .tree circle { fill: rgba(46,230,182,.14); stroke: #2EE6B6; stroke-width: 2; } .campus .tree line { stroke: #2EE6B6; stroke-width: 2; }
+.campus .shore { fill: rgba(255,194,75,.35); }
+.campus .ripple { stroke: rgba(159,176,255,.5); stroke-width: 2; stroke-linecap: round; }
+/* campus choreography: sky, sun, ridges draw, the chedi glints, buildings rise, windows light, water moves */
+.slide:not(.is-in) .campus .sun { transform: translateY(70px); opacity: 0; }
+.slide.is-in .campus .sun { transition: transform 2200ms var(--ease-out) 300ms, opacity 900ms linear 300ms; }
+.slide:not(.is-in) .campus .mfill { opacity: 0; }
+.slide.is-in .campus .mfill { transition: opacity 1200ms linear calc(var(--d, 0) * 200ms + 500ms); }
+.campus .mfill.m { --d: 2; }
+.campus .bld, .campus .tree { transform-origin: 50% 100%; }
+.slide:not(.is-in) .campus .bld, .slide:not(.is-in) .campus .tree { transform: scaleY(0); }
+.slide.is-in .campus .bld, .slide.is-in .campus .tree { transition: transform 900ms var(--ease-out) calc(var(--d) * 110ms + 900ms) !important; }
+.slide.is-in .campus .win { animation: lights 4.5s ease-in-out calc(var(--d) * .37s + 1.6s) infinite; }
+@keyframes lights { 0%, 100% { opacity: .85; } 50% { opacity: .35; } }
+.slide.is-in .campus .ripple { animation: ripple 5s ease-in-out calc(var(--d) * -.6s) infinite; }
+@keyframes ripple { 0%, 100% { transform: translateX(-18px); opacity: .35; } 50% { transform: translateX(18px); opacity: .8; } }
+.slide.is-in .campus .chedi path { animation: glint 3.2s ease-in-out 2.4s infinite; }
+@keyframes glint { 0%, 100% { fill: #FFC24B; } 50% { fill: #FFF1C2; } }
+/* CMU logo badge (official file deck/assets/logo/cmu.png; name shown until it is added) */
+.cmu-badge { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
+  background: #fff; border-radius: 22px; padding: 12px 26px 12px 18px; box-shadow: 0 10px 40px rgba(4,5,11,.45); }
+.cmu-badge .logo-slot.cmu { height: 64px; }
+.cmu-badge .logo-slot .fallback { font-size: 28px; color: #4B1E7A; }
+.cmu-sub { font-size: 15px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #4A4F6B; white-space: nowrap; }
+.slide:not(.is-in) .cmu-badge { transform: translate(-50%, -30px); opacity: 0; }
+.slide.is-in .cmu-badge { transition: transform 900ms cubic-bezier(.34,1.35,.5,1) 1500ms, opacity 400ms linear 1500ms; }
+.static .slide .campus * { animation: none !important; }
+/* slide 1b */
+.stat-hero.top { margin-top: 0; }
+/* thank you: one straight line, not oversized */
+.thanks { font-size: 112px; white-space: nowrap; }
+.campus .ridge.f { stroke: #6E79C8; opacity: .35; stroke-width: 1.6; }
+.campus .ridge.c { stroke: #9FB0FF; opacity: .22; stroke-width: 1.4; }
+.cmu-badge:has(.fallback) .cmu-sub { display: none; }
+.viz-svg.campus { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%); mask-image: linear-gradient(to bottom, transparent 0, #000 20%); }
