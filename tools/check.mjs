@@ -83,6 +83,7 @@ ok('only the current slide is visible after rapid input', shown.length === 1 && 
 
 // number jump, End, hash
 await page.keyboard.press('1'); await page.keyboard.press('2'); await page.keyboard.press('Enter');
+await page.waitForFunction(() => window.__state().idx === 12, null, { timeout: 8000 }).catch(() => {});
 ok('typing 12 + Enter jumps to slide 12', (await page.evaluate(() => window.__state().idx)) === 12);
 await page.keyboard.press('End');
 ok('End goes to the last main slide (10)', (await page.evaluate(() => window.__state().idx)) === 10);
