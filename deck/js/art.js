@@ -173,16 +173,16 @@
       const hsv = (h, sat, val) => { const f = (k) => { const kk = (k + h * 6) % 6; return val - val * sat * Math.max(0, Math.min(kk, 4 - kk, 1)); }; return [f(5), f(3), f(1)]; };
       const special = fi === pinkFace, fc = special ? P.lime : hsv(hue, .78, 1);
       const put = (x, y, col, sz, al) => { const Q = [0, 1, 2].map(j => (c[j] + u[j] * x + w[j] * y) * sc); out.push({ x: Q[0], y: Q[1], z: Q[2], c: col, s: sz, a: al }); };
-      for (let i = 0; i < 5; i++) { const A = P2[i], B = P2[(i + 1) % 5]; for (let t = 0; t < 24; t++) { const f = t / 24; put(lerp(A[0], B[0], f), lerp(A[1], B[1], f), mix(P.white, fc, .5), .75, .4); } }
+      for (let i = 0; i < 5; i++) { const A = P2[i], B = P2[(i + 1) % 5]; for (let t = 0; t < 24; t++) { const f = t / 24; put(lerp(A[0], B[0], f), lerp(A[1], B[1], f), mix(P.white, fc, .4), .8, .85); } }
       for (let i = 0; i < 5; i++) { const A = inner[i], B = inner[(i + 1) % 5], dx = B[0] - A[0], dy = B[1] - A[1];
-        for (let t = -1.15; t <= 2.15; t += .075) { const x = A[0] + dx * t, y = A[1] + dy * t; if (inside(x, y, P2)) put(x, y, fc, .7, .3); } }
+        for (let t = -1.15; t <= 2.15; t += .075) { const x = A[0] + dx * t, y = A[1] + dy * t; if (inside(x, y, P2)) put(x, y, fc, .75, .6); } }
       let k = 0, guard = 0;
       while (k < 270 && guard++ < 30000) {
         const x = (R() * 2 - 1) * R0, y = (R() * 2 - 1) * R0;
         if (!inside(x, y, P2)) continue;
         let near = false; for (let i = 0; i < 5; i++) if (lineD(x, y, inner[i], inner[(i + 1) % 5]) < .06) near = true;
         if (near) continue;
-        put(x, y, fc, 1.15, special ? .95 : .8); k++;
+        put(x, y, fc, 1.1, 1); k++;
       }
     });
     return fill(out, [P.slate, P.violet]);
@@ -229,7 +229,7 @@
   let SECT = [], lastSec = -9, drawCount = NP, gl = null, canvas = null, progBg, progPt, bufQuad, formBufs = [], swirlBuf, ok = false, U = {}, A = {};
   const VS_BG = 'attribute vec2 p; varying vec2 v; void main(){ v = p*.5+.5; gl_Position = vec4(p,0.,1.); }';
   const FS_BG = `precision highp float;
-  varying vec2 v; uniform vec2 uRes; uniform float uScroll; uniform float uSide; uniform float uFree;
+  varying vec2 v; uniform vec2 uRes; uniform float uScroll; uniform float uSide; uniform float uFree; uniform vec3 uObj;
   uniform vec4 uB[9]; uniform vec3 uBC[9]; uniform vec3 uBase[3]; uniform float uSec0;
   void main(){
     vec2 f = vec2(v.x, 1.-v.y);
@@ -244,6 +244,7 @@
       if (abs(dy) < 1.4){ vec2 d = vec2((f.x-b.x)*asp, dy*1.15); col += uBC[i]*exp(-dot(d,d)/(b.z*b.z))*b.w*.75; }
     }
     // calm, tinted (not black) zone under the text column
+    vec2 od = (f*uRes - uObj.xy)/uObj.z; col *= 1. - .5*exp(-dot(od,od)*.9);   // dim stage behind the subject
     float xs = f.x + (f.y - .5)*.16*(1.-2.*uSide);                            // slanted edge (diagonal, not a vertical seam)
     float txt = mix(1.-smoothstep(.50,.66,xs), smoothstep(.34,.50,xs), uSide);   // covers the text column (x 112–936 / 984–1808)
     col = mix(col, base*.32 + vec3(.022,.022,.065), txt*.80*(1.-uFree));
@@ -257,9 +258,9 @@
   varying vec3 vC; varying float vA;
   float inOut(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t+2., 3.)/2.; }
   void main(){
-    float d = .38*(aSw.w*.4 + .6*clamp((aPA.x+1.4)/2.8, 0., 1.));
-    float e = inOut(clamp((uM-d)/(1.-.38), 0., 1.));
-    float bulge = sin(3.14159*e)*(.55+.5*aSw.w);
+    float d = .26*(aSw.w*.4 + .6*clamp((aPA.x+1.4)/2.8, 0., 1.));
+    float e = inOut(clamp((uM-d)/(1.-.26), 0., 1.));
+    float bulge = sin(3.14159*e)*(.16+.2*aSw.w);
     vec3 p = mix(aPA, aPB, e) + aSw.xyz*bulge*vec3(1.,.7,1.);
     float cy = cos(uYaw), sy = sin(uYaw), cp = cos(uPitch), sp = sin(uPitch);
     float x1 = cy*p.x + sy*p.z, z1 = -sy*p.x + cy*p.z;
@@ -271,15 +272,15 @@
     float depth = clamp((z2+1.6)/3.2, 0., 1.);
     float tw = .82 + .18*sin(uTime*1.7 + aSw.w*40.);
     float flare = aSB.z*sin(3.14159*e)*2.2;
-    vA = zone*(.2+.8*pow(depth,1.5))*tw*mix(aSA.y, aSB.y + flare, e)*1.1;
+    vA = zone*(.5+.5*depth)*tw*mix(aSA.y, aSB.y + flare, e)*1.25;
     vC = mix(aCA, aCB, e);
-    gl_PointSize = (1.5 + 1.6*mix(aSA.x, aSB.x, e))*per*(uCam.z/330.)*3.1*uDpr;
+    gl_PointSize = max((1.5 + 1.6*mix(aSA.x, aSB.x, e))*per*(uCam.z/330.)*2.7*uDpr, 2.6);
   }`;
   const FS_PT = `precision mediump float; varying vec3 vC; varying float vA;
   void main(){ vec2 q = gl_PointCoord*2.-1.; float r2 = dot(q,q); if (r2 > 1.) discard;
-    float core = exp(-r2*22.), halo = exp(-r2*4.)*.32;
-    vec3 c = mix(vC, vec3(1.), core*.55);
-    gl_FragColor = vec4(c*(core+halo)*vA, 1.); }`;
+    float core = exp(-r2*9.), halo = exp(-r2*2.6)*.28;
+    vec3 c = mix(vC, vec3(1.), core*.32);
+    gl_FragColor = vec4(c*(core*1.15+halo)*vA, 1.); }`;
 
   function compile(vs, fs) {
     const mk = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
@@ -307,7 +308,7 @@
     if (!gl) return false;
     progBg = compile(VS_BG, FS_BG); progPt = compile(VS_PT, FS_PT);
     bufQuad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufQuad); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    for (const n of ['uRes', 'uScroll', 'uSide', 'uB', 'uBC', 'uBase', 'uSec0', 'uFree']) U['bg' + n] = gl.getUniformLocation(progBg, n);
+    for (const n of ['uRes', 'uScroll', 'uSide', 'uB', 'uBC', 'uBase', 'uSec0', 'uFree', 'uObj']) U['bg' + n] = gl.getUniformLocation(progBg, n);
     for (const n of ['uM', 'uYaw', 'uPitch', 'uTime', 'uSide', 'uDpr', 'uCam', 'uRes', 'uFree']) U['pt' + n] = gl.getUniformLocation(progPt, n);
     for (const n of ['aPA', 'aCA', 'aSA', 'aPB', 'aCB', 'aSB', 'aSw']) A[n] = gl.getAttribLocation(progPt, n);
     A.p = gl.getAttribLocation(progBg, 'p');
@@ -330,6 +331,7 @@
     gl.disable(gl.BLEND); gl.useProgram(progBg);
     const free = Math.sin(Math.PI * clamp(m)) * (a.side !== b.side ? 1 : .6);   // 0 at every stop
     gl.uniform2f(U.bguRes, W, H); gl.uniform1f(U.bguScroll, pos); gl.uniform1f(U.bguSide, side); gl.uniform1f(U.bguFree, free);
+    gl.uniform3f(U.bguObj, lerp(a.cx, b.cx, cm) * sc, lerp(a.cy, b.cy, cm) * sc, lerp(a.s, b.s, cm) * sc * 1.25);
     // only the three page sections that can be on screen are sent (keeps the shader light)
     const s0 = Math.max(0, Math.min(SECT.length - 3, Math.floor(pos) - 1 + (pos - Math.floor(pos) > .5 ? 1 : 0)));
     if (s0 !== lastSec) { lastSec = s0;

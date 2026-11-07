@@ -169,3 +169,10 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - Particles 7 000 → 10 000; ambient dust 250 only; forms topped up with jittered copies on the subject (denser shapes); subjects ~25–35 % larger, refitted so none is cut by the frame edge; crisper dot size. Auto-quality steps now 10 000 → 6 500 → 4 000.
 - Checks: all passed; 122/122 text runs ≥ 7:1 on the real background.
 - GitHub Pages: root `index.html` forwards to `deck/`, `.nojekyll`, `README.md`, `.gitignore` keeps private inputs (paper, script, reference images), build artefacts and superseded renderers out. Local repo initialised on `main` and committed; tested over HTTP (root → deck, WebGL on, navigation works, no errors). Not pushed (waiting for the repository link).
+
+---
+
+## v8 — Dandy: "gambarnya masih kurang jelas, ga keliatan, kaya langsung hilang"
+- Reproduced at laptop size (1366×768, DPR 1.25, `tools/laptopshots.mjs`): dots were sub-pixel cores on a bright blob, back faces dimmed to 20 %, megaminx almost invisible; during travel the shapes burst into a wide cloud.
+- Fix (art only): larger point cores + minimum point size 2.6 px; depth dimming 20 % → 50 % floor; overall particle brightness +14 %; a soft darker "stage" in the background behind the subject; megaminx edges/cuts/fills brighter; travel burst reduced (bulge .55–1.05 → .16–.36, stagger .38 → .26) so shapes morph visibly instead of vanishing.
+- Before/after: `shots/laptop_before.png` vs `shots/laptop_after.png`. Checks pass; text contrast unchanged (≥ 7:1).
