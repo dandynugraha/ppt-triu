@@ -363,3 +363,4 @@ p { font-size: 24px; line-height: 1.5; color: var(--ink); max-width: 32em; }
 .campus .ridge.c { stroke: #9FB0FF; opacity: .22; stroke-width: 1.4; }
 .cmu-badge:has(.fallback) .cmu-sub { display: none; }
 .viz-svg.campus { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%); mask-image: linear-gradient(to bottom, transparent 0, #000 20%); }
+.cmu-badge .logo-slot.cmu { height: 84px; } .cmu-badge { padding: 14px 28px 14px 22px; }

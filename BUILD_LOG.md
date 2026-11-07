@@ -204,3 +204,5 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - **New slide 2 — glioblastoma:** the contour brain moved here, with "15 months · median survival, glioblastoma" and the script's own lines (all verified verbatim, 168 fragments). Script slide 1 split: slide 1 = greeting + title (0:00–0:08, the script itself says 8 s), slide 2 = "Fifteen months…" to the bridge (0:08–0:55); notes, Indonesian notes, director's lines and timer budgets split accordingly. Deck now 11 main slides + 3 backups (12–14).
 - **Thank you.** one line, 112 px.
 - Checks: all passed (14/14 slides with a visual, End → 11); 308/308 text runs ≥ 7:1.
+
+- v11.1: IPB and CMU logos added by Dandy (deck/assets/logo/ipb.png, cmu.png); CMU logo enlarged to 84 px in the slide-1 badge. triu.png still missing (text "Tri-U 32" shown).
