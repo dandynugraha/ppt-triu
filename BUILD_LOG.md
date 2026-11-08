@@ -214,3 +214,13 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - Campus: advised a real (own / licensed) photo with background removed; built a slot `deck/assets/img/cmu-campus.png` that replaces the drawing automatically; meanwhile the drawing is reduced to a minimal one-ink line sketch (no clip-art buildings, trees, sun).
 - Removed the CMU subtitle; labels without dash/all-caps; Tri-U fallback green; header logos centred on slide 1 and enlarged (48 px).
 - Checks: all passed (optional-file warning lists triu.png and cmu-campus.png); 307/307 text runs ≥ 7:1 on the rendered page.
+
+---
+
+## v13 — Dandy: slide 2 white · campus drawing got worse · triu.png added (not white) — fit size/background; remove the line between the logos on slide 0 · "as a judge, what would you say?"
+- **Tri-U logo:** the supplied file was RGB on an off-white/lavender JPEG-like background with wide margins. Background made transparent (near-white, low-saturation pixels → alpha with soft edges) and trimmed (1016×604 → 962×537). Original kept at `build/triu_original.png`.
+- **Intro:** divider removed; IPB (wide) 128 px and Tri-U (square-ish) 210 px tall so they read at equal weight. Header: IPB 46 px, Tri-U 58 px.
+- **Slide 2:** pure white. Background now gives each slide exactly its own section colour at rest (no neighbour bleed in the corners); the diagonal blend only appears while travelling, so the scroll still reads.
+- **Campus:** replaced the thin line sketch with layered flat silhouettes (smooth Catmull-Rom ridges in navy tints, golden chedi on Doi Suthep, a tree line, Ang Kaew reservoir with a soft reflection and moving ripples); layers rise in one by one. Photo slot unchanged.
+- check.mjs: presenter popup timeout 5 s → 20 s (software-GL test browser is slow; failures alternated between unrelated checks).
+- Results: all checks passed; 307/307 text runs ≥ 7:1.

@@ -435,3 +435,19 @@ html, body, #stage { background: var(--paper); }
 .slide.is-in .viz-bottom .campus-photo { transition: opacity 1200ms linear 300ms, transform 1600ms var(--ease-out) 300ms; }
 .cmu-badge { background: #fff; border: 1px solid var(--rule); box-shadow: 0 6px 24px rgba(17,24,39,.08); padding: 12px 26px; }
 .hdr .logo-slot { height: 48px; } .hdr { height: 60px; top: 38px; } .brand { gap: 18px; height: 60px; } .brand .event { font-size: 17px; }
+
+/* ---------- v13 ---------- */
+/* intro: no divider; logos balanced (IPB is wide, Tri-U is nearly square) */
+.intro-rule { display: none; }
+.intro-logos { gap: 72px; }
+.intro .logo-slot.big.ipb { height: 128px; }
+.intro .logo-slot.big.triu { height: 210px; }
+.hdr .logo-slot:first-child { height: 46px; }
+.hdr .brand .logo-slot:nth-of-type(2), .hdr .brand .logo-slot ~ .logo-slot { height: 58px; }
+/* campus: layered flat silhouettes */
+.campus .ly.f1 { fill: #E6ECF5; } .campus .ly.f2 { fill: #C7D3E7; } .campus .ly.f3 { fill: #A3B4D1; } .campus .ly.f4, .campus .canopy circle { fill: #6E82AE; }
+.campus .lake { fill: #EEF3FA; } .campus .reflect { opacity: .16; }
+.campus .chedi path, .campus .chedi rect { fill: #E69F00; }
+.campus .ripple { stroke: #FFFFFF; stroke-width: 3; stroke-linecap: round; opacity: .9; }
+.slide:not(.is-in) .campus .ly { transform: translateY(60px); opacity: 0; }
+.slide.is-in .campus .ly { transition: transform 1400ms var(--ease-out) calc(var(--d) * 180ms + 200ms), opacity 900ms linear calc(var(--d) * 180ms + 200ms); }

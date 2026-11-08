@@ -193,26 +193,46 @@ def viz_protein(labels=True):
 
 
 def viz_campus():
-    """Chiang Mai University as a minimal editorial line drawing (v12): Doi Suthep ridge with the chedi on the
-    summit, a far ridge, and the Ang Kaew waterline. One ink colour, drawn in. If the official/real photo
-    deck/assets/img/cmu-campus.png exists (background removed), it replaces the drawing automatically.
+    """Chiang Mai University (v13): layered flat silhouettes — far haze, Doi Suthep with the golden chedi on the summit,
+    foothills, a tree line, and Ang Kaew reservoir with a soft reflection. Smooth curves, navy tints only.
+    A real photo at deck/assets/img/cmu-campus.png (background removed) replaces it automatically.
     The CMU logo is the official file deck/assets/logo/cmu.png - never drawn."""
-    W, H = 1920, 580
-    def line(points, cls, d):
-        pts = " ".join(f"{x},{y}" for x, y in points)
-        return f'<polyline class="cl {cls} draw" pathLength="1" points="{pts}" style="--d:{d}"/>'
-    far = [(0,250),(220,236),(460,222),(700,232),(920,212),(1120,204),(1300,214),(1560,200),(1760,214),(1920,208)]
-    main = [(0,300),(200,286),(420,272),(640,262),(860,244),(1040,214),(1200,170),(1330,136),(1420,112),(1460,104),(1500,112),(1600,146),(1740,196),(1920,236)]
-    contours = "".join(line([(x, y + k * 22 + k * k * 3) for x, y in main], "c", 2 + k) for k in range(1, 4))
-    chedi = ('<g class="chedi pop" style="--d:4" transform="translate(1460,104) scale(1.35)">'
-             '<path d="M0,-44 L4,-22 L8,-10 L13,0 L-13,0 L-8,-10 L-4,-22 Z"/><line x1="-17" y1="2" x2="17" y2="2"/></g>')
-    water = ('<line class="cl shore draw" pathLength="1" x1="0" y1="420" x2="1920" y2="420" style="--d:5"/>' +
-             "".join(f'<line class="cl ripple" x1="{x0}" y1="{y}" x2="{x0 + ln}" y2="{y}" style="--d:{i}"/>'
-                     for i, (x0, y, ln) in enumerate([(160,452,220),(620,466,160),(1080,450,260),(1500,470,200),(360,496,180),(900,504,240),(1360,512,200)])))
-    inner = line(far, "f", 0) + line(main, "m", 1) + contours + chedi + water
+    import random
+    W, H, SHORE = 1920, 580, 470
+    def smooth(pts):                                   # Catmull-Rom -> cubic Bezier through the points
+        d = f"M{pts[0][0]},{pts[0][1]}"
+        for k in range(len(pts) - 1):
+            p0, p1, p2 = pts[max(k - 1, 0)], pts[k], pts[k + 1]; p3 = pts[min(k + 2, len(pts) - 1)]
+            c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6); c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+            d += f" C{c1[0]:.1f},{c1[1]:.1f} {c2[0]:.1f},{c2[1]:.1f} {p2[0]},{p2[1]}"
+        return d
+    def layer(pts, cls, d, base=SHORE):
+        return f'<path class="ly {cls}" style="--d:{d}" d="{smooth(pts)} L{W},{base} L0,{base} Z"/>'
+    far = [(0,262),(300,236),(560,250),(820,218),(1080,230),(1320,200),(1600,218),(1920,196)]
+    back = [(0,334),(260,304),(520,288),(760,252),(980,216),(1160,178),(1320,140),(1420,114),(1460,106),(1500,112),(1600,142),(1740,192),(1920,228)]
+    mid = [(0,384),(220,356),(460,366),(700,334),(940,350),(1180,322),(1400,340),(1640,316),(1920,340)]
+    front = [(0,432),(320,416),(640,426),(960,410),(1280,422),(1600,406),(1920,420)]
+    def yfront(x):
+        for (x0, y0), (x1, y1) in zip(front, front[1:]):
+            if x0 <= x <= x1: t = (x - x0) / (x1 - x0); t = t * t * (3 - 2 * t); return y0 + (y1 - y0) * t
+        return front[-1][1]
+    r = random.Random(32); canopy = []
+    x = -10
+    while x < W + 20:
+        rad = r.uniform(11, 20); canopy.append((x, yfront(x) - rad * .35, rad)); x += rad * r.uniform(1.15, 1.6)
+    trees = "".join(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="{rr:.0f}"/>' for cx, cy, rr in canopy)
+    fr = layer(front, "f4", 4) + f'<g class="ly f4 canopy" style="--d:4">{trees}</g>'
+    reflect = (f'<g class="reflect" transform="translate(0,{2*SHORE}) scale(1,-1)">' + layer(front, "f4", 4) + f'<g class="canopy">{trees}</g></g>')
+    chedi = ('<g class="chedi pop" style="--d:6" transform="translate(1460,106) scale(1.3)">'
+             '<path d="M0,-44 L4,-22 L8,-10 L13,0 L-13,0 L-8,-10 L-4,-22 Z"/><rect x="-17" y="0" width="34" height="5"/></g>')
+    ripples = "".join(f'<line class="ripple" x1="{x0}" y1="{y}" x2="{x0 + ln}" y2="{y}" style="--d:{k}"/>'
+                      for k, (x0, y, ln) in enumerate([(140,500,240),(560,512,180),(1000,498,300),(1460,516,220),(320,540,200),(860,548,260),(1300,556,240),(1700,532,160)]))
+    inner = (layer(far, "f1", 0) + layer(back, "f2", 1) + chedi + layer(mid, "f3", 2) + fr +
+             f'<rect class="lake" x="0" y="{SHORE}" width="{W}" height="{H - SHORE}"/>' +
+             f'<clipPath id="lakeclip"><rect x="0" y="{SHORE}" width="{W}" height="{H - SHORE}"/></clipPath><g clip-path="url(#lakeclip)">{reflect}</g>' + ripples)
     return (f'<img class="campus-photo" src="assets/img/cmu-campus.png" alt="Chiang Mai University campus">'
             f'<svg class="viz-svg campus" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMax slice" role="img" '
-            f'aria-label="Line drawing of Doi Suthep with its chedi above the Ang Kaew waterline, Chiang Mai University">{inner}</svg>'
+            f'aria-label="Illustration: Doi Suthep with its golden chedi above Chiang Mai University and Ang Kaew reservoir">{inner}</svg>'
             '<div class="cmu-badge"><span class="logo-slot cmu"><img src="assets/logo/cmu.png" alt="Chiang Mai University" '
             f'data-fallback="{b(1, "campus")}"></span></div>')
 

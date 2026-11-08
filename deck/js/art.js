@@ -216,7 +216,7 @@
   const SECTIONS = [   // v12: near-white tints per section (academic light)
     ['#F1F4F9', [[.82, .28, .45, '#0072B2', .5], [.10, .86, .40, '#009E73', .4], [.60, .96, .30, '#F1F4F9', .2]]],
     ['#F7F3EC', [[.82, .28, .45, '#E69F00', .5], [.10, .86, .40, '#CC79A7', .4], [.60, .96, .30, '#F7F3EC', .2]]],
-    ['#EFF4F8', [[.82, .28, .45, '#009E73', .5], [.10, .86, .40, '#56B4E9', .4], [.60, .96, .30, '#EFF4F8', .2]]],
+    ['#FFFFFF', [[.5, .5, .1, '#FFFFFF', 0], [.5, .5, .1, '#FFFFFF', 0], [.5, .5, .1, '#FFFFFF', 0]]],   // slide 2: pure white
     ['#F0F6F3', [[.82, .28, .45, '#CC79A7', .5], [.10, .86, .40, '#0072B2', .4], [.60, .96, .30, '#F0F6F3', .2]]],
     ['#F5F2F7', [[.82, .28, .45, '#56B4E9', .5], [.10, .86, .40, '#E69F00', .4], [.60, .96, .30, '#F5F2F7', .2]]],
     ['#F1F4F9', [[.82, .28, .45, '#0072B2', .5], [.10, .86, .40, '#009E73', .4], [.60, .96, .30, '#F1F4F9', .2]]],
@@ -237,9 +237,10 @@
   // v12 academic light: white paper; each page section carries a barely-there tint that scrolls (next = up, back = down)
   void main(){
     vec2 f = vec2(v.x, 1.-v.y);
-    float asp = uRes.x/uRes.y, wy = f.y + uScroll, wd = wy + (f.x - .5)*.62;
+    float asp = uRes.x/uRes.y, wy = f.y + uScroll, wd = wy + (f.x - .5)*.62*uFree;   // diagonal only while travelling
     vec3 base = vec3(0.); float ws = 0.;
-    for (int i=0;i<3;i++){ float d = wd-(uSec0+float(i)+.5); float w = exp(-d*d*3.); base += uBase[i]*w; ws += w; }
+    float sp = wd - uSec0;   // each section owns exactly one screen; at rest a slide shows only its own colour
+    for (int i=0;i<3;i++){ float fi = float(i); float w = smoothstep(fi-.04, fi+.04, sp) - smoothstep(fi+.96, fi+1.04, sp); base += uBase[i]*w; ws += w; }
     base /= max(ws, 1e-4);
     float dg = clamp(f.x*.62 + (1.-f.y)*.38, 0., 1.);
     vec3 col = mix(vec3(1.), base, .35 + .65*dg);
@@ -332,7 +333,7 @@
     gl.uniform2f(U.bguRes, W, H); gl.uniform1f(U.bguScroll, pos); gl.uniform1f(U.bguSide, side); gl.uniform1f(U.bguFree, free); gl.uniform1f(U.bguCenter, lerp(a.c || 0, b.c || 0, cm)); gl.uniform1f(U.bguTop, lerp(a.t || 0, b.t || 0, cm));
     gl.uniform3f(U.bguObj, lerp(a.cx, b.cx, cm) * sc, lerp(a.cy, b.cy, cm) * sc, lerp(a.s, b.s, cm) * sc * 1.25);
     // only the three page sections that can be on screen are sent (keeps the shader light)
-    const s0 = Math.max(0, Math.min(SECT.length - 3, Math.floor(pos) - 1 + (pos - Math.floor(pos) > .5 ? 1 : 0)));
+    const s0 = Math.max(0, Math.min(SECT.length - 3, Math.floor(pos) - 1));
     if (s0 !== lastSec) { lastSec = s0;
       const B = new Float32Array(36), BC = new Float32Array(27), BASE = new Float32Array(9);
       for (let i = 0; i < 3; i++) { const S = SECT[s0 + i]; BASE.set(S.base, i * 3);

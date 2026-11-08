@@ -98,7 +98,7 @@ ok('"." blacks the screen (clicker)', await page.evaluate(() => document.getElem
 await page.keyboard.press('.');
 
 // presenter window
-const [pop] = await Promise.all([page.waitForEvent('popup', { timeout: 5000 }).catch(() => null), page.keyboard.press('n')]);
+const [pop] = await Promise.all([page.waitForEvent('popup', { timeout: 20000 }).catch(() => null), page.keyboard.press('n')]);
 if (pop) {
   await pop.waitForTimeout(600);
   const txt = await pop.evaluate(() => document.body.innerText);
