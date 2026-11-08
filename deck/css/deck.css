@@ -364,3 +364,74 @@ p { font-size: 24px; line-height: 1.5; color: var(--ink); max-width: 32em; }
 .cmu-badge:has(.fallback) .cmu-sub { display: none; }
 .viz-svg.campus { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%); mask-image: linear-gradient(to bottom, transparent 0, #000 20%); }
 .cmu-badge .logo-slot.cmu { height: 84px; } .cmu-badge { padding: 14px 28px 14px 22px; }
+
+/* =====================================================================
+   v12 — ACADEMIC LIGHT (overrides everything above)
+   white paper · near-black ink · navy accent · Okabe–Ito data colours
+   ===================================================================== */
+html, body, #stage { background: var(--paper); }
+.grain { display: none; }
+/* header: logos straight on the page; Tri-U in green; centred on slide 1 */
+.brand { background: transparent; padding: 0; box-shadow: none; }
+.brand .sep { background: var(--rule); }
+.brand .event { color: var(--muted); }
+.logo-slot .fallback, .logo-slot.big .fallback { color: var(--green); }
+.hdr::after { border-top-color: var(--ink); }
+#stage.side-t .hdr { justify-content: center; }
+#stage.side-t .hdr::after { display: none; }
+.counter { color: var(--muted); } .counter b { color: var(--ink); }
+/* labels: plain words, no decorative dash, no all-caps */
+.eyebrow { gap: 0; margin-bottom: 22px; font-size: 20px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--violet); }
+.eyebrow::before { display: none; }
+.stat-hero .lbl, .inline-stat span:last-child, .srow span:last-child, .viz-svg .lab.caps, .cap, .n-lbl { text-transform: none; letter-spacing: 0; }
+.stat-hero .lbl, .srow span:last-child, .inline-stat span:last-child { font-size: 18px; font-weight: 500; color: var(--muted); }
+.viz-svg .lab.caps { font-size: 18px; font-weight: 600; }
+/* text colours */
+.t, p, .quote, .human, .lead, .callout, .def dt, .tag, .compare h3, .t1 td { color: var(--ink); }
+.aside, .byline, .def dd, .credit, .caption, .compare p, .ask-sub, .bar-quote { color: var(--muted); }
+.byline strong, .aside.strong, .bar-quote strong { color: var(--ink); }
+.lime, .lime-text, .tag-n { color: var(--verm); }
+.ask { color: var(--violet); }
+.thai { color: var(--violet); }
+.stat-hero .num { color: var(--ink); } .stat-hero .unit { color: var(--cyan); }
+.inline-stat .num { color: var(--cyan); }
+.callout { border-color: var(--f-orange); }
+.def, .def:last-child, .stepper li, .stepper li:last-child, .t1 th, .t1 td, .compare h3 { border-color: var(--rule); }
+.tag { border-color: var(--rule); }
+.viz-cap, .viz-cap .muted { color: var(--muted); }
+.viz-cap .sw.lime { background: var(--f-green); } .viz-cap .sw.white { background: var(--ink); }
+/* charts: publication style */
+.viz-svg text { fill: var(--ink); }
+.viz-svg .lab { fill: var(--muted); } .viz-svg .lab.big { fill: var(--ink); } .viz-svg .tick { fill: var(--muted); }
+.viz-svg .lab.lime, .viz-svg text.lime { fill: var(--verm); }
+.viz-svg .axis { stroke: #9AA1AC; } .viz-svg .grid { stroke: #E7EAEE; }
+.dot.hi { fill: var(--f-blue); } .dot.lo { fill: var(--f-orange); }
+.vessel { stroke: var(--f-verm); opacity: .85; } .wall { stroke: #9AA1AC; }
+.rec path { stroke: var(--f-blue); } .rec circle { fill: var(--f-blue); } .sig { fill: var(--f-orange); } .drug path { stroke: var(--f-green); }
+.spine { stroke: var(--rule); } .node circle { fill: #fff; }
+.node.cyan circle { stroke: var(--f-blue); } .node.magenta circle { stroke: var(--f-purple); } .node.amber circle { stroke: var(--f-orange); }
+.node.cyan .ico *, .node.cyan .ico rect, .node.cyan .ico circle { stroke: var(--f-blue); } .node.cyan .ico rect, .node.cyan .ico circle { fill: var(--f-blue); stroke: none; }
+.node.magenta .ico * { stroke: var(--f-purple); } .node.magenta .ico circle { fill: var(--f-purple); }
+.node.amber .ico * { stroke: var(--f-orange); } .node.amber .ico circle { fill: var(--f-orange); }
+.coin.h { fill: var(--f-orange); } .coin.t { stroke: #9AA1AC; opacity: .9; } .coin.run { fill: var(--f-blue); }
+.runbox, .runlead { stroke: var(--f-blue); } .viz-svg .runlab { fill: var(--cyan); }
+.cell { fill: var(--f-blue); }
+.pt.tr { fill: var(--f-sky); } .pt.te { fill: var(--f-orange); }
+.brace.bad { stroke: var(--f-verm); } .brace.good { stroke: var(--f-blue); }
+.bar.slate { fill: #9AA1AC; } .bar.cyan { fill: var(--f-blue); } .bar.amber { fill: var(--f-orange); } .bar.magenta { fill: var(--f-verm); }
+.viz-svg .zero.magenta { stroke: var(--f-verm); } .viz-svg .zero.slate { stroke: #9AA1AC; }
+.chance { stroke: var(--f-orange); }
+.ci.slate, .cap.slate { stroke: #9AA1AC; } .ci.magenta, .cap.magenta { stroke: var(--f-verm); }
+.pt-auc.slate { fill: #4B5563; } .pt-auc.magenta { fill: var(--f-verm); }
+.gap { stroke: var(--f-verm); }
+/* slide 1: minimal line drawing of Doi Suthep (or a real photo when provided) */
+.campus .cl { fill: none; stroke: var(--violet); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.campus .cl.f { opacity: .28; } .campus .cl.m { stroke-width: 2.8; } .campus .cl.c { opacity: .22; stroke-width: 1.5; }
+.campus .cl.shore { opacity: .5; } .campus .cl.ripple { stroke: var(--f-blue); opacity: .4; }
+.campus .chedi path { fill: var(--f-orange); } .campus .chedi line { stroke: var(--violet); stroke-width: 2; }
+.viz-bottom .campus-photo { position: absolute; left: 0; bottom: 0; width: 1920px; height: 580px; object-fit: cover; object-position: center bottom; }
+.viz.has-photo .viz-svg.campus { display: none; }
+.slide:not(.is-in) .viz-bottom .campus-photo { opacity: 0; transform: translateY(30px); }
+.slide.is-in .viz-bottom .campus-photo { transition: opacity 1200ms linear 300ms, transform 1600ms var(--ease-out) 300ms; }
+.cmu-badge { background: #fff; border: 1px solid var(--rule); box-shadow: 0 6px 24px rgba(17,24,39,.08); padding: 12px 26px; }
+.hdr .logo-slot { height: 48px; } .hdr { height: 60px; top: 38px; } .brand { gap: 18px; height: 60px; } .brand .event { font-size: 17px; }

@@ -65,7 +65,7 @@ def viz_angio():           # schematic, not data
     rec = "".join(f'<g class="rec pop" style="--d:{i}" transform="translate(600,{290 + i*90})"><path d="M0,0 L-26,-18 M0,0 L-26,18 M0,0 L22,0"/><circle cx="-28" cy="-19" r="5"/><circle cx="-28" cy="19" r="5"/></g>'
                   for i in range(5))
     drug = "".join(f'<g class="drug pop" style="--d:{6+i}" transform="translate({470 + i*8},{360 + i*95})"><path d="M0,0 L-14,-14 M0,0 L-14,14 M0,0 L16,0"/></g>' for i in range(3))
-    inner = (f'<defs><radialGradient id="tum" cx="40%" cy="40%"><stop offset="0" stop-color="#FFC24B"/><stop offset=".55" stop-color="#FF6FA8"/><stop offset="1" stop-color="#B0206A"/></radialGradient></defs>'
+    inner = (f'<defs><radialGradient id="tum" cx="40%" cy="40%"><stop offset="0" stop-color="#F6C9A6"/><stop offset=".55" stop-color="#E58A5E"/><stop offset="1" stop-color="#B4451A"/></radialGradient></defs>'
              f'<circle class="tumour pop" cx="230" cy="470" r="128" fill="url(#tum)"/>' + v +
              '<line class="wall draw" x1="610" y1="230" x2="610" y2="720" pathLength="1"/>' + rec + sig + drug +
              txt(230, 650, b(3, "vz_tumour"), "lab big", "middle") + txt(430, 300, b(3, "vz_signal"), "lab", "middle") +
@@ -193,58 +193,28 @@ def viz_protein(labels=True):
 
 
 def viz_campus():
-    """Chiang Mai University, stylised: Doi Suthep ridges with the golden chedi on the summit, the campus with
-    Lanna-style tiered roofs and trees, Ang Kaew reservoir, a low sun. Illustration, not a photo or a logo.
-    The CMU logo itself is NOT drawn: it is the official file deck/assets/logo/cmu.png (text fallback)."""
+    """Chiang Mai University as a minimal editorial line drawing (v12): Doi Suthep ridge with the chedi on the
+    summit, a far ridge, and the Ang Kaew waterline. One ink colour, drawn in. If the official/real photo
+    deck/assets/img/cmu-campus.png exists (background removed), it replaces the drawing automatically.
+    The CMU logo is the official file deck/assets/logo/cmu.png - never drawn."""
     W, H = 1920, 580
-    def ridge(points, cls, d):
+    def line(points, cls, d):
         pts = " ".join(f"{x},{y}" for x, y in points)
-        return f'<polyline class="ridge {cls} draw" pathLength="1" points="{pts}" style="--d:{d}"/>'
-    back = [(0,236),(160,224),(320,214),(470,226),(620,208),(760,200),(900,196),(1040,180),(1180,160),(1300,128),(1400,104),(1450,92),(1500,102),(1600,132),(1720,168),(1840,190),(1920,200)]
-    far = [(0,196),(200,184),(420,170),(600,182),(820,160),(1000,150),(1180,138),(1320,150),(1560,140),(1760,156),(1920,150)]
-    mid = [(0,300),(140,288),(300,276),(460,288),(600,268),(760,258),(900,268),(1040,252),(1200,236),(1360,252),(1520,270),(1700,262),(1920,280)]
-    fill_back = "M0,580 L" + " L".join(f"{x},{y}" for x, y in back) + " L1920,580 Z"
-    fill_mid = "M0,580 L" + " L".join(f"{x},{y}" for x, y in mid) + " L1920,580 Z"
-    def lanna(x, y, w, tiers, d):
-        out = [f'<g class="bld pop" style="--d:{d}">']
-        out.append(f'<rect class="wall" x="{x - w*.42:.0f}" y="{y}" width="{w*.84:.0f}" height="46"/>')
-        for t in range(tiers):
-            ww, yy = w * (1 - t * .22), y - t * 22
-            out.append(f'<path class="roof" d="M{x - ww/2:.0f},{yy} L{x - ww*.32:.0f},{yy-22} L{x + ww*.32:.0f},{yy-22} L{x + ww/2:.0f},{yy} Z"/>')
-        out.append(f'<path class="kalae" d="M{x-10},{y - tiers*22 - 12} L{x},{y - tiers*22 - 26} L{x+10},{y - tiers*22 - 12}"/>')
-        for k in range(5):
-            out.append(f'<rect class="win" x="{x - w*.36 + k * w*.16:.0f}" y="{y + 14}" width="{w*.08:.0f}" height="18" style="--d:{d+k}"/>')
-        out.append('</g>')
-        return "".join(out)
-    def block(x, y, w, h, d):
-        wins = "".join(f'<rect class="win" x="{x + 10 + c*26}" y="{y + 12 + r*22}" width="14" height="12" style="--d:{d+r+c}"/>'
-                       for r in range(int((h-16)//22)) for c in range(int((w-14)//26)))
-        return f'<g class="bld pop" style="--d:{d}"><rect class="wall" x="{x}" y="{y}" width="{w}" height="{h}"/>{wins}</g>'
-    def tree(x, y, r, d):
-        return f'<g class="tree pop" style="--d:{d}"><line x1="{x}" y1="{y}" x2="{x}" y2="{y+26}"/><circle cx="{x}" cy="{y - r*.6:.0f}" r="{r}"/></g>'
-    water = "".join(f'<line class="ripple" x1="{x0}" y1="{y}" x2="{x0 + ln}" y2="{y}" style="--d:{i}"/>'
-                    for i, (x0, y, ln) in enumerate([(120,500,260),(520,512,180),(860,498,320),(1300,508,220),(1600,520,200),(300,540,240),(980,548,280),(1440,556,240),(60,562,160)]))
-    chedi = ('<g class="chedi pop" style="--d:6" transform="translate(1450,92) scale(1.5)">'
-             '<path d="M0,-46 L5,-22 L9,-10 L14,0 L-14,0 L-9,-10 L-5,-22 Z"/><rect x="-18" y="0" width="36" height="6"/></g>')
-    inner = ('<defs><radialGradient id="dusk" cx="84%" cy="22%" r="60%"><stop offset="0" stop-color="#FFC24B" stop-opacity=".55"/>'
-             '<stop offset=".45" stop-color="#FF6FA8" stop-opacity=".18"/><stop offset="1" stop-color="#FF6FA8" stop-opacity="0"/></radialGradient>'
-             '<linearGradient id="mtnB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B2A86"/><stop offset="1" stop-color="#140F3A"/></linearGradient>'
-             '<linearGradient id="mtnM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25205E"/><stop offset="1" stop-color="#0C0B26"/></linearGradient>'
-             '<linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A6A"/><stop offset="1" stop-color="#070A20"/></linearGradient></defs>'
-             f'<rect x="0" y="0" width="{W}" height="{H}" fill="url(#dusk)" class="glow"/>'
-             '<circle class="sun" cx="1700" cy="128" r="56"/>' + ridge(far, "f", 0) +
-             f'<path class="mfill b" d="{fill_back}"/>' + ridge(back, "b", 0) +
-             "".join(ridge([(x, y + k*16 + (k*k)*2) for x, y in back], "c", 1) for k in range(1, 4)) + chedi +
-             f'<path class="mfill m" d="{fill_mid}"/>' + ridge(mid, "m", 1) +
-             tree(140, 380, 30, 2) + tree(210, 392, 22, 3) + block(260, 330, 170, 92, 3) + tree(470, 386, 26, 4) +
-             lanna(640, 376, 230, 3, 4) + tree(800, 388, 24, 5) + block(860, 318, 210, 104, 5) + tree(1110, 384, 28, 6) +
-             lanna(1290, 380, 190, 2, 6) + tree(1430, 390, 22, 7) + block(1480, 340, 150, 82, 7) + tree(1680, 382, 30, 8) + tree(1760, 394, 20, 8) +
-             f'<rect class="shore" x="0" y="422" width="{W}" height="4"/>'
-             f'<rect x="0" y="426" width="{W}" height="{H-426}" fill="url(#lake)"/>' + water)
-    return (f'<svg class="viz-svg campus" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMax slice" role="img" '
-            f'aria-label="Illustration of Chiang Mai University: Doi Suthep with its golden chedi, the campus and Ang Kaew reservoir">{inner}</svg>'
+        return f'<polyline class="cl {cls} draw" pathLength="1" points="{pts}" style="--d:{d}"/>'
+    far = [(0,250),(220,236),(460,222),(700,232),(920,212),(1120,204),(1300,214),(1560,200),(1760,214),(1920,208)]
+    main = [(0,300),(200,286),(420,272),(640,262),(860,244),(1040,214),(1200,170),(1330,136),(1420,112),(1460,104),(1500,112),(1600,146),(1740,196),(1920,236)]
+    contours = "".join(line([(x, y + k * 22 + k * k * 3) for x, y in main], "c", 2 + k) for k in range(1, 4))
+    chedi = ('<g class="chedi pop" style="--d:4" transform="translate(1460,104) scale(1.35)">'
+             '<path d="M0,-44 L4,-22 L8,-10 L13,0 L-13,0 L-8,-10 L-4,-22 Z"/><line x1="-17" y1="2" x2="17" y2="2"/></g>')
+    water = ('<line class="cl shore draw" pathLength="1" x1="0" y1="420" x2="1920" y2="420" style="--d:5"/>' +
+             "".join(f'<line class="cl ripple" x1="{x0}" y1="{y}" x2="{x0 + ln}" y2="{y}" style="--d:{i}"/>'
+                     for i, (x0, y, ln) in enumerate([(160,452,220),(620,466,160),(1080,450,260),(1500,470,200),(360,496,180),(900,504,240),(1360,512,200)])))
+    inner = line(far, "f", 0) + line(main, "m", 1) + contours + chedi + water
+    return (f'<img class="campus-photo" src="assets/img/cmu-campus.png" alt="Chiang Mai University campus">'
+            f'<svg class="viz-svg campus" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMax slice" role="img" '
+            f'aria-label="Line drawing of Doi Suthep with its chedi above the Ang Kaew waterline, Chiang Mai University">{inner}</svg>'
             '<div class="cmu-badge"><span class="logo-slot cmu"><img src="assets/logo/cmu.png" alt="Chiang Mai University" '
-            f'data-fallback="{b(1, "campus")}"></span><span class="cmu-sub">{b(1, "venue")}</span></div>')
+            f'data-fallback="{b(1, "campus")}"></span></div>')
 
 VIZ = {1: viz_campus(), "1b": viz_canvas("brain"), 2: viz_waffle(), 3: viz_angio(), 4: viz_pipeline(), 5: viz_checks(), 6: viz_bars(), 7: viz_auc(),
        8: viz_pairs(), 9: viz_protein(), 10: viz_canvas("brain-warm"), 11: viz_auc(), 12: viz_pairs(), 13: viz_protein()}

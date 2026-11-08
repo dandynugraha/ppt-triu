@@ -40,7 +40,7 @@ const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--ena
 const ctx = await browser.newContext({ viewport: { width: 960, height: 540 } });   // live pages: small (software GL in CI)
 const page = await ctx.newPage();
 const consoleErrors = [], external = [], logoMisses = [];
-page.on('console', m => { if (m.type() === 'error') { const u = (m.location() || {}).url || ''; if (/assets\/logo\//.test(u)) logoMisses.push(u); else consoleErrors.push(m.text() + ' @ ' + u); } });
+page.on('console', m => { if (m.type() === 'error') { const u = (m.location() || {}).url || ''; if (/assets\/(logo|img)\//.test(u)) logoMisses.push(u); else consoleErrors.push(m.text() + ' @ ' + u); } });
 page.on('pageerror', e => consoleErrors.push(String(e)));
 ctx.on('request', r => { const u = r.url(); if (!/^(file:|data:|blob:|about:)/.test(u)) external.push(u); });
 await page.goto(pathToFileURL(join(deck, 'index.html')).href);
@@ -150,8 +150,8 @@ ok('all text inside its own column box, below the header and above the bottom ed
 await browser.close();
 ok('no console errors', !consoleErrors.length, consoleErrors.slice(0, 3).join(' | '));
 ok('no network requests', !external.length, external.slice(0, 3).join(', '));
-if (logoMisses.length && logosPresent.length < 2) warn('logo files not yet added (text fallback shown)', 'deck/assets/logo/ipb.png, triu.png');
-else ok('logo files load', !logoMisses.length, logoMisses.join(', '));
+if (logoMisses.length) warn('optional files not yet added (fallback shown)', logoMisses.map(u => u.split('/deck/')[1]).filter((v, i, a) => a.indexOf(v) === i).join(', '));
+else ok('all optional files (logos, campus photo) load', true);
 
 let fail = 0;
 for (const r of results) { const tag = r.warn ? 'WARN' : r.pass ? 'PASS' : 'FAIL'; if (!r.pass) fail++; console.log(`${tag}  ${r.name}${r.info ? '  — ' + r.info : ''}`); }

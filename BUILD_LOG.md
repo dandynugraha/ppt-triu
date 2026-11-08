@@ -206,3 +206,11 @@ Request: (1) font looks AI-generic → change it; (2) every Enter only zooms →
 - Checks: all passed (14/14 slides with a visual, End → 11); 308/308 text runs ≥ 7:1.
 
 - v11.1: IPB and CMU logos added by Dandy (deck/assets/logo/ipb.png, cmu.png); CMU logo enlarged to 84 px in the slide-1 badge. triu.png still missing (text "Tri-U 32" shown).
+
+---
+
+## v12 — Dandy: opening white · remove "Chiang Mai University, Thailand" beside the logo · no dashes on labels · Tri-U 32 green · slide-1 logos centred · campus drawing feels AI (improve / photo / advice) · purple-blue gradient feels AI — make it fit an international research conference
+- Recommendation given and built: **academic light** (white page, ink, navy, Okabe–Ito data colours, publication-style charts). Background still scrolls via faint section tints.
+- Campus: advised a real (own / licensed) photo with background removed; built a slot `deck/assets/img/cmu-campus.png` that replaces the drawing automatically; meanwhile the drawing is reduced to a minimal one-ink line sketch (no clip-art buildings, trees, sun).
+- Removed the CMU subtitle; labels without dash/all-caps; Tri-U fallback green; header logos centred on slide 1 and enlarged (48 px).
+- Checks: all passed (optional-file warning lists triu.png and cmu-campus.png); 307/307 text runs ≥ 7:1 on the rendered page.

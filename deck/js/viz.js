@@ -10,6 +10,7 @@
   const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
   const mixc = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+  const L = { navy: hex('#1E3A8A'), blue: hex('#0072B2'), sky: hex('#56B4E9'), orange: hex('#E69F00'), verm: hex('#D55E00'), green: hex('#009E73'), purple: hex('#CC79A7'), grey: hex('#9AA1AC'), ink: hex('#111827'), paper: [255, 255, 255] };
   const COL = { cyan: hex('#3FE0FF'), violet: hex('#8B5CFF'), magenta: hex('#FF8AE6'), amber: hex('#FFC24B'), coral: hex('#FF7A59'),
     lime: hex('#D9FA3F'), white: hex('#F2F4FF'), slate: hex('#B3BAE4'), pink: hex('#FF6FA8'), gold: hex('#FFD36B') };
 
@@ -63,7 +64,7 @@
     const cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
     const proj = (x, y, z) => { const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z; const y2 = cp * y - sp * z1, z2 = sp * y + cp * z1; const per = 3.6 / (3.6 - z2); return [cx + x1 * S * per, cy - y2 * S * per, z2]; };
     const scanZ = -.60 + (Math.sin(t * .45) * .5 + .5) * 1.20;
-    const lo = warm ? COL.amber : COL.cyan, mid = warm ? COL.pink : COL.violet, hi = warm ? COL.violet : COL.magenta;
+    const lo = warm ? L.orange : L.sky, mid = warm ? L.purple : L.blue, hi = warm ? L.navy : L.navy;
     const k = W / 808;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const order = BRAIN.map((sl, i) => [i, -syw * 0 + cyw * sl.z]).sort((a, b) => a[1] - b[1]);   // far slices first
@@ -74,13 +75,13 @@
       ctx.beginPath();
       for (const s of sl.segs) { const a = proj(s[0], s[1], s[2]), b = proj(s[3], s[4], s[5]); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }
       ctx.lineWidth = (1.5 + depth * .9 + scan * 2.4) * k;
-      ctx.strokeStyle = rgba(mixc(base, COL.white, .1 + scan * .75), clamp((.32 + .6 * depth) + scan * .4));
+      ctx.strokeStyle = rgba(mixc(base, L.ink, scan * .85), clamp((.30 + .62 * depth) + scan * .4));
       ctx.stroke();
       const dz = sl.z - TUM[2], tr = .12;
       if (Math.abs(dz) < tr) {                                  // tumour: a small ellipsoid of rings inside the brain
         const rr = Math.sqrt(tr * tr - dz * dz); ctx.beginPath();
         for (let q = 0; q <= 40; q++) { const a = q / 40 * 6.283, p = proj(TUM[0] + Math.cos(a) * rr * 1.15, TUM[1] + Math.sin(a) * rr, sl.z); q ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
-        ctx.strokeStyle = rgba(warm ? COL.lime : COL.amber, .8); ctx.lineWidth = 1.8 * k; ctx.stroke();
+        ctx.strokeStyle = rgba(L.verm, .9); ctx.lineWidth = 2.2 * k; ctx.stroke();
       }
     }
   }
@@ -130,30 +131,31 @@
       if (it.k === 0) {
         const s = it.s, f = (s.idx - PROT.r0) / span;
         let col, w;
-        if (s.ss === 'H') { col = mixc(COL.magenta, COL.violet, f); w = 10; }
-        else if (s.ss === 'E') { col = mixc(COL.cyan, COL.amber, f); w = 8; }
-        else { col = mixc(COL.slate, COL.white, .3); w = 3.2; }
+        if (s.ss === 'H') { col = mixc(L.purple, hex('#8E4F9E'), f); w = 10; }
+        else if (s.ss === 'E') { col = mixc(L.blue, L.sky, f); w = 8; }
+        else { col = L.grey; w = 3.2; }
         const lw = w * it.a[3] * W / 808;
-        ctx.strokeStyle = rgba(mixc([10, 12, 40], col, .35 + .65 * shade), 1); ctx.lineWidth = lw + 2.4 * W / 808;
+        ctx.strokeStyle = rgba(mixc(L.paper, mixc(col, L.ink, .45), .35 + .65 * shade), 1); ctx.lineWidth = lw + 2.4 * W / 808;
         ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.stroke();
-        ctx.strokeStyle = rgba(mixc(col, COL.white, .25 * shade), .35 + .65 * shade); ctx.lineWidth = lw;
+        ctx.strokeStyle = rgba(mixc(L.paper, col, .35 + .65 * shade), 1); ctx.lineWidth = lw;
         ctx.stroke();
       } else if (it.k === 1) {
         ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]);
-        ctx.strokeStyle = 'rgba(6,8,24,.9)'; ctx.lineWidth = 7 * W / 808; ctx.stroke();
-        ctx.strokeStyle = rgba(COL.lime, 1); ctx.lineWidth = 3.4 * W / 808; ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 7 * W / 808; ctx.stroke();
+        ctx.strokeStyle = rgba(L.ink, 1); ctx.lineWidth = 3 * W / 808; ctx.stroke();
       } else if (it.k === 2) {
-        const c = it.el === 'N' ? COL.cyan : it.el === 'O' ? COL.coral : it.el === 'C' ? COL.lime : COL.white, r = 6.2 * it.a[3] * W / 808;
-        ctx.fillStyle = 'rgba(6,8,24,.9)'; ctx.beginPath(); ctx.arc(it.a[0], it.a[1], r + 2 * W / 808, 0, 6.283); ctx.fill();
+        const c = it.el === 'N' ? L.blue : it.el === 'O' ? L.verm : it.el === 'C' ? L.green : L.orange, r = 6.2 * it.a[3] * W / 808;
+        ctx.fillStyle = 'rgba(17,24,39,.95)'; ctx.beginPath(); ctx.arc(it.a[0], it.a[1], r + 2 * W / 808, 0, 6.283); ctx.fill();
         ctx.fillStyle = rgba(c, 1); ctx.beginPath(); ctx.arc(it.a[0], it.a[1], r, 0, 6.283); ctx.fill();
       } else if (it.k === 3 && labels) {
         const r = 7 * W / 808;
-        ctx.fillStyle = rgba(COL.white, 1); ctx.beginPath(); ctx.arc(it.a[0], it.a[1], r, 0, 6.283); ctx.fill();
+        ctx.fillStyle = rgba(L.ink, 1); ctx.beginPath(); ctx.arc(it.a[0], it.a[1], r, 0, 6.283); ctx.fill();
         ctx.font = `600 ${Math.round(20 * W / 808)}px Inter, system-ui, sans-serif`;
         const k = W / 808, tw = ctx.measureText(it.name).width, tx = W * .06, ty = H * (.12 + it.i * .075);
-        ctx.strokeStyle = 'rgba(244,246,255,.55)'; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.moveTo(tx + tw + 14 * k, ty - 7 * k); ctx.lineTo(it.a[0], it.a[1]); ctx.stroke();
-        ctx.fillStyle = 'rgba(8,8,26,.85)'; ctx.fillRect(tx - 8 * k, ty - 24 * k, tw + 18 * k, 34 * k);
-        ctx.fillStyle = rgba(COL.white, 1); ctx.fillText(it.name, tx, ty);
+        ctx.strokeStyle = 'rgba(17,24,39,.55)'; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.moveTo(tx + tw + 14 * k, ty - 7 * k); ctx.lineTo(it.a[0], it.a[1]); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,.96)'; ctx.fillRect(tx - 8 * k, ty - 24 * k, tw + 18 * k, 34 * k);
+        ctx.strokeStyle = 'rgba(17,24,39,.35)'; ctx.lineWidth = 1 * k; ctx.strokeRect(tx - 8 * k, ty - 24 * k, tw + 18 * k, 34 * k);
+        ctx.fillStyle = rgba(L.ink, 1); ctx.fillText(it.name, tx, ty);
       }
     }
   }

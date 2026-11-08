@@ -1,0 +1,6 @@
+Optional: put a real photo of Chiang Mai University here as
+
+  cmu-campus.png   (background removed / transparent PNG, about 1920 px wide)
+
+It appears across the bottom of slide 1 and replaces the line drawing automatically.
+No rebuild needed. Use a photo you took or one you have the right to use.

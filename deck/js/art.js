@@ -213,19 +213,19 @@
   const NSTOP = STOPS.length;
 
   /* background page: per section a coloured (never black) base + off-centre light blobs, mostly on the art side */
-  const SECTIONS = [
-    ['#10154A', [[.80, .32, .45, '#3D5BFF', .55], [.97, .86, .35, '#7B4DFF', .35], [.60, .93, .30, '#2FB8FF', .20]]],
-    ['#1A1040', [[.70, .70, .48, '#FF8A3D', .34], [.30, .80, .40, '#E040C8', .30], [.88, .20, .30, '#5B3DFF', .26]]],   // 1: Chiang Mai dusk
-    ['#150E3C', [[.84, .24, .42, '#7B4DFF', .55], [.99, .78, .38, '#E040C8', .40], [.58, .96, .30, '#3D5BFF', .22]]],
-    ['#06293A', [[.20, .30, .45, '#16C8C0', .45], [.03, .84, .36, '#2E6BFF', .38], [.44, .08, .26, '#3FE0FF', .18]]],
-    ['#260A33', [[.80, .30, .42, '#D0285E', .45], [.97, .86, .35, '#7B4DFF', .32], [.60, .97, .30, '#FF7A59', .16]]],
-    ['#0D1848', [[.22, .28, .45, '#3D5BFF', .50], [.42, .86, .30, '#2EE6B6', .28], [.03, .92, .32, '#E89A2B', .22]]],
-    ['#1B0F4C', [[.84, .22, .45, '#3A3AFF', .55], [.70, .82, .32, '#E040C8', .26], [.99, .62, .28, '#2FB8FF', .18]]],
-    ['#0C1236', [[.20, .34, .42, '#C8389F', .42], [.04, .82, .36, '#7B4DFF', .32], [.46, .96, .24, '#3D5BFF', .16]]],
-    ['#140A38', [[.86, .24, .44, '#5B3DFF', .34], [.98, .86, .36, '#C8389F', .26], [.62, .08, .25, '#2EE6B6', .14]]],
-    ['#28122E', [[.20, .30, .42, '#F0A030', .36], [.04, .84, .35, '#FF7A59', .30], [.42, .97, .25, '#E040C8', .20]]],
-    ['#082C3E', [[.84, .30, .45, '#2EE6B6', .40], [.98, .86, .35, '#E040C8', .30], [.62, .06, .26, '#3D5BFF', .18]]],
-    ['#1B0E40', [[.20, .32, .45, '#FF5F9E', .40], [.04, .86, .35, '#F0A030', .30], [.44, .97, .30, '#7B4DFF', .28]]],
+  const SECTIONS = [   // v12: near-white tints per section (academic light)
+    ['#F1F4F9', [[.82, .28, .45, '#0072B2', .5], [.10, .86, .40, '#009E73', .4], [.60, .96, .30, '#F1F4F9', .2]]],
+    ['#F7F3EC', [[.82, .28, .45, '#E69F00', .5], [.10, .86, .40, '#CC79A7', .4], [.60, .96, .30, '#F7F3EC', .2]]],
+    ['#EFF4F8', [[.82, .28, .45, '#009E73', .5], [.10, .86, .40, '#56B4E9', .4], [.60, .96, .30, '#EFF4F8', .2]]],
+    ['#F0F6F3', [[.82, .28, .45, '#CC79A7', .5], [.10, .86, .40, '#0072B2', .4], [.60, .96, .30, '#F0F6F3', .2]]],
+    ['#F5F2F7', [[.82, .28, .45, '#56B4E9', .5], [.10, .86, .40, '#E69F00', .4], [.60, .96, .30, '#F5F2F7', .2]]],
+    ['#F1F4F9', [[.82, .28, .45, '#0072B2', .5], [.10, .86, .40, '#009E73', .4], [.60, .96, .30, '#F1F4F9', .2]]],
+    ['#F7F3EC', [[.82, .28, .45, '#E69F00', .5], [.10, .86, .40, '#CC79A7', .4], [.60, .96, .30, '#F7F3EC', .2]]],
+    ['#EFF5F2', [[.82, .28, .45, '#009E73', .5], [.10, .86, .40, '#56B4E9', .4], [.60, .96, .30, '#EFF5F2', .2]]],
+    ['#F3F2F8', [[.82, .28, .45, '#CC79A7', .5], [.10, .86, .40, '#0072B2', .4], [.60, .96, .30, '#F3F2F8', .2]]],
+    ['#F6F3EE', [[.82, .28, .45, '#56B4E9', .5], [.10, .86, .40, '#E69F00', .4], [.60, .96, .30, '#F6F3EE', .2]]],
+    ['#EFF4F8', [[.82, .28, .45, '#0072B2', .5], [.10, .86, .40, '#009E73', .4], [.60, .96, .30, '#EFF4F8', .2]]],
+    ['#F5F2F7', [[.82, .28, .45, '#E69F00', .5], [.10, .86, .40, '#CC79A7', .4], [.60, .96, .30, '#F5F2F7', .2]]],
   ];
 
   /* ---------- WebGL ---------- */
@@ -234,27 +234,19 @@
   const FS_BG = `precision highp float;
   varying vec2 v; uniform vec2 uRes; uniform float uScroll; uniform float uSide; uniform float uFree; uniform vec3 uObj; uniform float uCenter; uniform float uTop;
   uniform vec4 uB[9]; uniform vec3 uBC[9]; uniform vec3 uBase[3]; uniform float uSec0;
+  // v12 academic light: white paper; each page section carries a barely-there tint that scrolls (next = up, back = down)
   void main(){
     vec2 f = vec2(v.x, 1.-v.y);
-    float asp = uRes.x/uRes.y, wy = f.y + uScroll, wd = wy + (f.x - .5)*.62;   // wd: page coordinate on a diagonal
+    float asp = uRes.x/uRes.y, wy = f.y + uScroll, wd = wy + (f.x - .5)*.62;
     vec3 base = vec3(0.); float ws = 0.;
     for (int i=0;i<3;i++){ float d = wd-(uSec0+float(i)+.5); float w = exp(-d*d*3.); base += uBase[i]*w; ws += w; }
     base /= max(ws, 1e-4);
-    float dg = clamp(f.x*.62 + (1.-f.y)*.38, 0., 1.);                       // diagonal shading, bottom-left -> top-right
-    vec3 col = base * (.72 + .5*mix(dg, 1.-dg, uSide));                       // brighter towards the art side, never black
+    float dg = clamp(f.x*.62 + (1.-f.y)*.38, 0., 1.);
+    vec3 col = mix(vec3(1.), base, .35 + .65*dg);
     for (int i=0;i<9;i++){
       vec4 b = uB[i]; float dy = wy - b.y;
-      if (abs(dy) < 1.4){ vec2 d = vec2((f.x-b.x)*asp, dy*1.15); col += uBC[i]*exp(-dot(d,d)/(b.z*b.z))*b.w*.75; }
+      if (abs(dy) < 1.4){ vec2 d = vec2((f.x-b.x)*asp, dy*1.15); col = mix(col, uBC[i], exp(-dot(d,d)/(b.z*b.z))*b.w*.10); }
     }
-    // calm, tinted (not black) zone under the text column
-    vec2 od = (f*uRes - uObj.xy)/uObj.z; col *= 1. - .64*exp(-dot(od,od)*.55);   // dim stage behind the subject
-    float xs = f.x + (f.y - .5)*.16*(1.-2.*uSide);                            // slanted edge (diagonal, not a vertical seam)
-    float txt = mix(1.-smoothstep(.50,.66,xs), smoothstep(.34,.50,xs), uSide);   // covers the text column (x 112–936 / 984–1808)
-    float edges = max(1.-smoothstep(.27,.36,f.x), smoothstep(.64,.73,f.x));      // centre layout: text on both sides
-    txt = mix(txt, edges, uCenter);
-    float topband = (1.-smoothstep(.44,.60,f.y)) * (1.-smoothstep(.40,.50,abs(f.x-.5)));   // centred title on top
-    txt = mix(txt, topband, uTop);
-    col = mix(col, base*.32 + vec3(.022,.022,.065), txt*.80*(1.-uFree));
     gl_FragColor = vec4(col, 1.);
   }`;
   const VS_PT = `precision highp float;

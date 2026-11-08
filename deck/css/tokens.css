@@ -13,23 +13,27 @@
 @font-face { font-family: "Noto Sans Thai"; font-weight: 500; font-display: block; src: url("../fonts/noto-sans-thai-thai-500-normal.woff2") format("woff2"); unicode-range: U+0E01-0E5B; }
 
 :root {
-  /* colour */
-  --paper: #04050B;
-  --card: #0E1230;
-  --ink: #F4F6FF;
-  --muted: #C6CCEA;
-  --rule: #2A3060;
-  --hairline: #1C2350;
-  --violet: #9FB0FF;
-  --violet-deep: #1E27C9;
-  --periwinkle: #2A34F2;
-  --lime: #D9FA3F;
-  --cyan: #3FE0FF;
-  --magenta: #FF8AE6;
-  --amber: #FFC24B;
-  --slate: #B3BAE4;
-  --mark-ink: #04050B;
-  --light-paper: #F8F9FB;
+  /* colour — v12 "academic light": white page, near-black ink, one institutional navy, Okabe–Ito data colours */
+  --paper: #FFFFFF;
+  --card: #F6F7F9;
+  --ink: #111827;
+  --muted: #374151;
+  --rule: #D5DAE1;
+  --hairline: #E7EAEE;
+  --violet: #1E3A8A;        /* accent text (navy) */
+  --violet-deep: #1E3A8A;
+  --periwinkle: #1E3A8A;
+  --lime: #E69F00;          /* single highlight colour (Okabe orange), lines/underlines only */
+  --cyan: #0B4F8A;          /* text-safe blue */
+  --magenta: #7A2E6A;       /* text-safe reddish purple */
+  --amber: #7A4100;         /* text-safe orange-brown */
+  --slate: #374151;
+  --green: #055C3D;         /* Tri-U 32 */
+  --verm: #8A2E0F;
+  /* data fills (not text): Okabe–Ito */
+  --f-blue: #0072B2; --f-orange: #E69F00; --f-green: #009E73; --f-verm: #D55E00; --f-sky: #56B4E9; --f-purple: #CC79A7; --f-grey: #9AA1AC;
+  --mark-ink: #111827;
+  --light-paper: #FFFFFF;
   /* type */
   --display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

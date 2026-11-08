@@ -10,7 +10,8 @@ OPEN
   then open http://localhost:8000
 
 LOGOS
-  Put ipb.png, triu.png and cmu.png in deck/assets/logo/ (exact names). No rebuild needed.
+  Put ipb.png, triu.png and cmu.png in deck/assets/logo/ (exact names). Optional: a real campus photo
+  with the background removed as deck/assets/img/cmu-campus.png (slide 1). No rebuild needed.
 
 KEYS
   Next ........ Enter, Space, Right, Down, PageDown (clicker forward)

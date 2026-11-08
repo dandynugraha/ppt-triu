@@ -169,3 +169,15 @@ Frame travel 1.6–3.4 s with a gentle in/out curve (Dandy: too fast); text arri
 - **Text compositions differ per slide:** hero + giant stat (1), definition list + inline stat (2), filled big-numeral stepper (3), tri-colour giant title + bar quote (4), giant statement + pill tags (5), mega title + 4-up stat row (6), quote-led (7), callout box (8), lime ask with underline (9), letter-by-letter "Thank you." (10).
 - **Motion:** each title its own move (rise, wipe, slide, flip, scale, drop, split, reveal, letters); visuals draw themselves (bars grow, lines draw, dots pop, the nested AUC point travels from 0.687 to 0.497, signals flow from tumour to receivers).
 - **Colour:** accents cyan #3FE0FF, magenta #FF8AE6, amber #FFC24B, lime #D9FA3F, slate #B3BAE4; muted text #C6CCEA. Background darkens softly behind each visual (stage). Measured: 298/298 text runs (incl. chart labels) ≥ 7:1 on the rendered background.
+
+---
+
+## v12 — ACADEMIC LIGHT (current; supersedes all dark/gradient colour notes)
+**Why:** Dandy: the purple-blue glowing gradient reads as "AI-generic"; the audience is researchers at an international conference.
+- **Page:** white paper (#FFFFFF) with barely-there section tints (cool/warm/mint, 3–6 %) that still scroll on next/back; no glow, no grain, no dark stage.
+- **Ink:** #111827 text, #374151 secondary, navy #1E3A8A accent; "Tri-U 32" in green #055C3D.
+- **Data colours:** Okabe–Ito (colour-blind safe, journal standard) — blue #0072B2, orange #E69F00, vermillion #D55E00, bluish-green #009E73, sky #56B4E9, reddish-purple #CC79A7, grey #9AA1AC — for bars, dots, intervals, diagrams; text uses darker text-safe shades (≥ 7:1).
+- **Labels:** plain sentence-case words, no decorative dash, no all-caps.
+- **Header:** logos directly on the page (no pill); centred on slide 1.
+- **Slide 1 campus:** minimal one-ink line drawing of Doi Suthep with the chedi and the Ang Kaew waterline; a real photo at `deck/assets/img/cmu-campus.png` (background removed) replaces it automatically. CMU badge shows the official logo only.
+- **Brain / protein:** brain contours in sky→blue→navy with a vermillion tumour (close slide: orange→purple); 2OH4 helices reddish-purple, sheets blue, coils grey, inhibitor in CPK-like colours (C green, N blue, O vermillion), labels in white boxes with ink text.

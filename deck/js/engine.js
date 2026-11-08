@@ -87,6 +87,12 @@
     if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail, { once: true });
   });
 
+  // slide 1: a real campus photo (deck/assets/img/cmu-campus.png) replaces the line drawing when present
+  host.querySelectorAll('img.campus-photo').forEach(img => {
+    const ok = () => img.closest('.viz').classList.add('has-photo'), bad = () => img.remove();
+    if (img.complete) (img.naturalWidth ? ok : bad)(); else { img.addEventListener('load', ok, { once: true }); img.addEventListener('error', bad, { once: true }); }
+  });
+
   /* ---------- intro sequence (flow.PNG) ---------- */
   function measureIntro() {
     const ipb = intro.querySelector('.ipb'), box = intro.querySelector('.intro-logos');
