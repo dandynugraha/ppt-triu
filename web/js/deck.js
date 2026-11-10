@@ -29,6 +29,26 @@
     };
   });
 
+  // ---------- web-only additions on top of the PPTX layout ----------
+  // Slide 4 (91 patients, 46 high / 45 low): BraTS logo next to the data source, linked to the TCIA collection page.
+  // Appears with the caption (click 2); clicking it opens the page in a new tab and does not advance the slide.
+  (function addBrats() {
+    const s = S.find(x => x.id === '4'); if (!s) return;
+    const m = { id: 900001, name: '!!web_brats_logo', kind: 'pic', x: 1659, y: 818, w: 184, h: 48, rot: 0, alpha: 1 };
+    const a = document.createElement('a');
+    a.className = 'shp k-pic web-link bld hid';
+    a.href = 'https://www.cancerimagingarchive.net/analysis-result/brats-tcga-gbm/';
+    a.target = '_blank'; a.rel = 'noopener';
+    a.title = 'BraTS-TCGA-GBM on The Cancer Imaging Archive (opens in a new tab)';
+    Object.assign(a.style, { left: m.x + 'px', top: m.y + 'px', width: m.w + 'px', height: m.h + 'px' });
+    a.dataset.name = m.name; a.dataset.id = m.id; a.dataset.step = 2;
+    const im = document.createElement('img');
+    im.src = 'img/pptx/BRATS.png'; im.alt = 'BraTS'; im.draggable = false;
+    Object.assign(im.style, { left: 0, top: 0, width: m.w + 'px', height: m.h + 'px' });
+    a.appendChild(im); s.el.appendChild(a);
+    s.map.top.push({ s: m, el: a }); s.map.byId.set(m.id, a);
+  })();
+
   // ---------- fit ----------
   function fit() {
     const sc = Math.min(innerWidth / 1920, innerHeight / 1080);

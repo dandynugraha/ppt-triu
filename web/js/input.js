@@ -73,14 +73,15 @@
     spot.style.opacity = 1;
   }
   addEventListener('pointermove', moveLaser);
+  const onLink = (e) => !!(e.target && e.target.closest && e.target.closest('a[href]'));
   addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') return;
+    if (e.pointerType === 'touch' || onLink(e)) return;
     if (e.button === 1) { e.preventDefault(); pause(); return; }
     if (e.button !== 0) return;
     down = { t: performance.now(), timer: setTimeout(() => { if (down) { spotOn = true; const [x, y] = toStage(e); drawSpot(x, y); } }, 300) };
   });
   addEventListener('pointerup', (e) => {
-    if (e.pointerType === 'touch' || e.button !== 0 || !down) return;
+    if (e.pointerType === 'touch' || e.button !== 0 || !down || onLink(e)) { if (down) clearTimeout(down.timer); down = null; return; }
     clearTimeout(down.timer);
     const held = performance.now() - down.t; down = null;
     if (spotOn) { spotOn = false; spot.style.opacity = 0; return; }   // long-press = spotlight, no advance
@@ -103,7 +104,7 @@
   let touch = null;
   addEventListener('touchstart', (e) => { touch = { n: e.touches.length, t: performance.now(), x: e.touches[0].clientX }; }, { passive: true });
   addEventListener('touchend', (e) => {
-    if (!touch || document.documentElement.classList.contains('scroll')) return;
+    if (!touch || document.documentElement.classList.contains('scroll') || onLink(e)) { touch = null; return; }
     const dt = performance.now() - touch.t;
     if (touch.n >= 2 && dt < 400) { pause(); touch = null; return; }
     if (touch.n === 1 && dt < 400) { e.preventDefault(); nav('touch', touch.x > innerWidth / 3 ? D.next : D.prev); }

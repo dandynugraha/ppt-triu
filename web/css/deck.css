@@ -19,6 +19,9 @@ html, body { margin: 0; height: 100%; background: #FFFFFF; overflow: hidden; }
 .tx span { white-space: pre-wrap; }
 .tx .thai { font-family: 'Leelawadee UI', 'Sarabun', 'Tahoma', sans-serif; }
 .hid { visibility: hidden; }
+a.web-link { display: block; cursor: pointer; outline-offset: 4px; }
+a.web-link:hover img, a.web-link:focus-visible img { outline: 2px solid #0072B2; outline-offset: 3px; }
+#stage.laser-on a.web-link { cursor: none; }
 .live-off { display: none !important; }
 /* dashed signal arrows flow in their direction (web only) */
 path.march { animation: march 0.9s linear infinite; }
